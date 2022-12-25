@@ -9,7 +9,6 @@ Method | HTTP request | Description
 [**create_ship_ship_scan**](#create_ship_ship_scan) | **post** /my/ships/{shipSymbol}/scan/ships | Scan Ships
 [**create_ship_system_scan**](#create_ship_system_scan) | **post** /my/ships/{shipSymbol}/scan/systems | Scan Systems
 [**create_survey**](#create_survey) | **post** /my/ships/{shipSymbol}/survey | Create Survey
-[**deploy_asset**](#deploy_asset) | **post** /my/ships/{shipSymbol}/deploy | Deploy Asset
 [**dock_ship**](#dock_ship) | **post** /my/ships/{shipSymbol}/dock | Dock Ship
 [**extract_resources**](#extract_resources) | **post** /my/ships/{shipSymbol}/extract | Extract Resources
 [**get_my_ship**](#get_my_ship) | **get** /my/ships/{shipSymbol} | Get Ship
@@ -23,6 +22,7 @@ Method | HTTP request | Description
 [**purchase_ship**](#purchase_ship) | **post** /my/ships | Purchase Ship
 [**refuel_ship**](#refuel_ship) | **post** /my/ships/{shipSymbol}/refuel | Refuel Ship
 [**sell_cargo**](#sell_cargo) | **post** /my/ships/{shipSymbol}/sell | Sell Cargo
+[**ship_refine**](#ship_refine) | **post** /my/ships/{shipSymbol}/refine | Ship Refine
 [**transfer_cargo**](#transfer_cargo) | **post** /my/ships/{shipSymbol}/transfer | Transfer Cargo
 [**warp_ship**](#warp_ship) | **post** /my/ships/{shipSymbol}/warp | Warp Ship
 
@@ -40,6 +40,7 @@ Command a ship to chart the current waypoint.  Waypoints in the universe are unc
 ```python
 import openapi_client
 from openapi_client.apis.tags import fleet_api
+from openapi_client.model.waypoint import Waypoint
 from openapi_client.model.chart import Chart
 from pprint import pprint
 # Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
@@ -136,6 +137,7 @@ dict, frozendict.frozendict,  | frozendict.frozendict,  |  |
 ### Dictionary Keys
 Key | Input Type | Accessed Type | Description | Notes
 ------------ | ------------- | ------------- | ------------- | -------------
+**waypoint** | [**Waypoint**]({{complexTypePrefix}}Waypoint.md) | [**Waypoint**]({{complexTypePrefix}}Waypoint.md) |  | 
 **chart** | [**Chart**]({{complexTypePrefix}}Chart.md) | [**Chart**]({{complexTypePrefix}}Chart.md) |  | 
 **any_string_name** | dict, frozendict.frozendict, str, date, datetime, int, float, bool, decimal.Decimal, None, list, tuple, bytes, io.FileIO, io.BufferedReader | frozendict.frozendict, str, BoolClass, decimal.Decimal, NoneClass, tuple, bytes, FileIO | any string name can be used but the value must be the correct type | [optional]
 
@@ -544,129 +546,6 @@ Class Name | Input Type | Accessed Type | Description | Notes
 
 [[Back to top]](#__pageTop) [[Back to API list]](../../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../../README.md#documentation-for-models) [[Back to README]](../../../README.md)
 
-# **deploy_asset**
-<a name="deploy_asset"></a>
-> deploy_asset(ship_symbol)
-
-Deploy Asset
-
-Use this endpoint to deploy a Communications Relay to a waypoint. A waypoint with a communications relay will allow agents to retrieve price information from the market. Without a relay, agents must send a ship to a market to retrieve price information.  Communication relays can be purchased from a market that exports `COMM_RELAY_I`.
-
-### Example
-
-* Bearer Authentication (AgentToken):
-```python
-import openapi_client
-from openapi_client.apis.tags import fleet_api
-from pprint import pprint
-# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
-# See configuration.py for a list of all supported configuration parameters.
-configuration = openapi_client.Configuration(
-    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
-)
-
-# The client must configure the authentication and authorization parameters
-# in accordance with the API server security policy.
-# Examples for each auth method are provided below, use the example that
-# satisfies your auth use case.
-
-# Configure Bearer authorization: AgentToken
-configuration = openapi_client.Configuration(
-    access_token = 'YOUR_BEARER_TOKEN'
-)
-# Enter a context with an instance of the API client
-with openapi_client.ApiClient(configuration) as api_client:
-    # Create an instance of the API class
-    api_instance = fleet_api.FleetApi(api_client)
-
-    # example passing only required values which don't have defaults set
-    path_params = {
-        'shipSymbol': "shipSymbol_example",
-    }
-    try:
-        # Deploy Asset
-        api_response = api_instance.deploy_asset(
-            path_params=path_params,
-        )
-    except openapi_client.ApiException as e:
-        print("Exception when calling FleetApi->deploy_asset: %s\n" % e)
-
-    # example passing only optional values
-    path_params = {
-        'shipSymbol': "shipSymbol_example",
-    }
-    body = dict(
-        symbol="symbol_example",
-    )
-    try:
-        # Deploy Asset
-        api_response = api_instance.deploy_asset(
-            path_params=path_params,
-            body=body,
-        )
-    except openapi_client.ApiException as e:
-        print("Exception when calling FleetApi->deploy_asset: %s\n" % e)
-```
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-body | typing.Union[SchemaForRequestBodyApplicationJson, Unset] | optional, default is unset |
-path_params | RequestPathParams | |
-content_type | str | optional, default is 'application/json' | Selects the schema and serialization of the request body
-stream | bool | default is False | if True then the response.content will be streamed and loaded from a file like object. When downloading a file, set this to True to force the code to deserialize the content to a FileSchema file
-timeout | typing.Optional[typing.Union[int, typing.Tuple]] | default is None | the timeout used by the rest client
-skip_deserialization | bool | default is False | when True, headers and body will be unset and an instance of api_client.ApiResponseWithoutDeserialization will be returned
-
-### body
-
-# SchemaForRequestBodyApplicationJson
-
-## Model Type Info
-Input Type | Accessed Type | Description | Notes
------------- | ------------- | ------------- | -------------
-dict, frozendict.frozendict,  | frozendict.frozendict,  |  | 
-
-### Dictionary Keys
-Key | Input Type | Accessed Type | Description | Notes
------------- | ------------- | ------------- | ------------- | -------------
-**symbol** | str,  | str,  |  | 
-**any_string_name** | dict, frozendict.frozendict, str, date, datetime, int, float, bool, decimal.Decimal, None, list, tuple, bytes, io.FileIO, io.BufferedReader | frozendict.frozendict, str, BoolClass, decimal.Decimal, NoneClass, tuple, bytes, FileIO | any string name can be used but the value must be the correct type | [optional]
-
-### path_params
-#### RequestPathParams
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-shipSymbol | ShipSymbolSchema | | 
-
-# ShipSymbolSchema
-
-## Model Type Info
-Input Type | Accessed Type | Description | Notes
------------- | ------------- | ------------- | -------------
-str,  | str,  |  | 
-
-### Return Types, Responses
-
-Code | Class | Description
-------------- | ------------- | -------------
-n/a | api_client.ApiResponseWithoutDeserialization | When skip_deserialization is True this response is returned
-204 | [ApiResponseFor204](#deploy_asset.ApiResponseFor204) | OK
-
-#### deploy_asset.ApiResponseFor204
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-response | urllib3.HTTPResponse | Raw response |
-body | Unset | body was not defined |
-headers | Unset | headers were not defined |
-
-### Authorization
-
-[AgentToken](../../../README.md#AgentToken)
-
-[[Back to top]](#__pageTop) [[Back to API list]](../../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../../README.md#documentation-for-models) [[Back to README]](../../../README.md)
-
 # **dock_ship**
 <a name="dock_ship"></a>
 > {str: (bool, date, datetime, dict, float, int, list, str, none_type)} dock_ship(ship_symbol)
@@ -852,6 +731,7 @@ with openapi_client.ApiClient(configuration) as api_client:
                 )
             ],
             expiration="1970-01-01T00:00:00.00Z",
+            size="SMALL",
         ),
     )
     try:
@@ -2409,6 +2289,215 @@ Key | Input Type | Accessed Type | Description | Notes
 **agent** | [**Agent**]({{complexTypePrefix}}Agent.md) | [**Agent**]({{complexTypePrefix}}Agent.md) |  | 
 **cargo** | [**ShipCargo**]({{complexTypePrefix}}ShipCargo.md) | [**ShipCargo**]({{complexTypePrefix}}ShipCargo.md) |  | 
 **transaction** | [**MarketTransaction**]({{complexTypePrefix}}MarketTransaction.md) | [**MarketTransaction**]({{complexTypePrefix}}MarketTransaction.md) |  | 
+**any_string_name** | dict, frozendict.frozendict, str, date, datetime, int, float, bool, decimal.Decimal, None, list, tuple, bytes, io.FileIO, io.BufferedReader | frozendict.frozendict, str, BoolClass, decimal.Decimal, NoneClass, tuple, bytes, FileIO | any string name can be used but the value must be the correct type | [optional]
+
+### Authorization
+
+[AgentToken](../../../README.md#AgentToken)
+
+[[Back to top]](#__pageTop) [[Back to API list]](../../../README.md#documentation-for-api-endpoints) [[Back to Model list]](../../../README.md#documentation-for-models) [[Back to README]](../../../README.md)
+
+# **ship_refine**
+<a name="ship_refine"></a>
+> {str: (bool, date, datetime, dict, float, int, list, str, none_type)} ship_refine(ship_symbol)
+
+Ship Refine
+
+Attempt to refine the raw materials on your ship. The request will only succeed if your ship is capable of refining at the time of the request.
+
+### Example
+
+* Bearer Authentication (AgentToken):
+```python
+import openapi_client
+from openapi_client.apis.tags import fleet_api
+from openapi_client.model.ship_cargo import ShipCargo
+from openapi_client.model.cooldown import Cooldown
+from pprint import pprint
+# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
+# See configuration.py for a list of all supported configuration parameters.
+configuration = openapi_client.Configuration(
+    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
+)
+
+# The client must configure the authentication and authorization parameters
+# in accordance with the API server security policy.
+# Examples for each auth method are provided below, use the example that
+# satisfies your auth use case.
+
+# Configure Bearer authorization: AgentToken
+configuration = openapi_client.Configuration(
+    access_token = 'YOUR_BEARER_TOKEN'
+)
+# Enter a context with an instance of the API client
+with openapi_client.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = fleet_api.FleetApi(api_client)
+
+    # example passing only required values which don't have defaults set
+    path_params = {
+        'shipSymbol': "shipSymbol_example",
+    }
+    try:
+        # Ship Refine
+        api_response = api_instance.ship_refine(
+            path_params=path_params,
+        )
+        pprint(api_response)
+    except openapi_client.ApiException as e:
+        print("Exception when calling FleetApi->ship_refine: %s\n" % e)
+
+    # example passing only optional values
+    path_params = {
+        'shipSymbol': "shipSymbol_example",
+    }
+    body = dict(
+        produce="IRON",
+    )
+    try:
+        # Ship Refine
+        api_response = api_instance.ship_refine(
+            path_params=path_params,
+            body=body,
+        )
+        pprint(api_response)
+    except openapi_client.ApiException as e:
+        print("Exception when calling FleetApi->ship_refine: %s\n" % e)
+```
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+body | typing.Union[SchemaForRequestBodyApplicationJson, Unset] | optional, default is unset |
+path_params | RequestPathParams | |
+content_type | str | optional, default is 'application/json' | Selects the schema and serialization of the request body
+accept_content_types | typing.Tuple[str] | default is ('application/json', ) | Tells the server the content type(s) that are accepted by the client
+stream | bool | default is False | if True then the response.content will be streamed and loaded from a file like object. When downloading a file, set this to True to force the code to deserialize the content to a FileSchema file
+timeout | typing.Optional[typing.Union[int, typing.Tuple]] | default is None | the timeout used by the rest client
+skip_deserialization | bool | default is False | when True, headers and body will be unset and an instance of api_client.ApiResponseWithoutDeserialization will be returned
+
+### body
+
+# SchemaForRequestBodyApplicationJson
+
+## Model Type Info
+Input Type | Accessed Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+dict, frozendict.frozendict,  | frozendict.frozendict,  |  | 
+
+### Dictionary Keys
+Key | Input Type | Accessed Type | Description | Notes
+------------ | ------------- | ------------- | ------------- | -------------
+**produce** | str,  | str,  |  | must be one of ["IRON", "COPPER", "SILVER", "GOLD", "ALUMINUM", "PLATINUM", "URANITE", "MERITIUM", "FUEL", ] 
+**any_string_name** | dict, frozendict.frozendict, str, date, datetime, int, float, bool, decimal.Decimal, None, list, tuple, bytes, io.FileIO, io.BufferedReader | frozendict.frozendict, str, BoolClass, decimal.Decimal, NoneClass, tuple, bytes, FileIO | any string name can be used but the value must be the correct type | [optional]
+
+### path_params
+#### RequestPathParams
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+shipSymbol | ShipSymbolSchema | | 
+
+# ShipSymbolSchema
+
+## Model Type Info
+Input Type | Accessed Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+str,  | str,  |  | 
+
+### Return Types, Responses
+
+Code | Class | Description
+------------- | ------------- | -------------
+n/a | api_client.ApiResponseWithoutDeserialization | When skip_deserialization is True this response is returned
+200 | [ApiResponseFor200](#ship_refine.ApiResponseFor200) | The ship has successfully started refining.
+
+#### ship_refine.ApiResponseFor200
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+response | urllib3.HTTPResponse | Raw response |
+body | typing.Union[SchemaFor200ResponseBodyApplicationJson, ] |  |
+headers | Unset | headers were not defined |
+
+# SchemaFor200ResponseBodyApplicationJson
+
+## Model Type Info
+Input Type | Accessed Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+dict, frozendict.frozendict,  | frozendict.frozendict,  |  | 
+
+### Dictionary Keys
+Key | Input Type | Accessed Type | Description | Notes
+------------ | ------------- | ------------- | ------------- | -------------
+**[data](#data)** | dict, frozendict.frozendict,  | frozendict.frozendict,  |  | 
+**any_string_name** | dict, frozendict.frozendict, str, date, datetime, int, float, bool, decimal.Decimal, None, list, tuple, bytes, io.FileIO, io.BufferedReader | frozendict.frozendict, str, BoolClass, decimal.Decimal, NoneClass, tuple, bytes, FileIO | any string name can be used but the value must be the correct type | [optional]
+
+# data
+
+## Model Type Info
+Input Type | Accessed Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+dict, frozendict.frozendict,  | frozendict.frozendict,  |  | 
+
+### Dictionary Keys
+Key | Input Type | Accessed Type | Description | Notes
+------------ | ------------- | ------------- | ------------- | -------------
+**[consumed](#consumed)** | list, tuple,  | tuple,  |  | 
+**cooldown** | [**Cooldown**]({{complexTypePrefix}}Cooldown.md) | [**Cooldown**]({{complexTypePrefix}}Cooldown.md) |  | 
+**cargo** | [**ShipCargo**]({{complexTypePrefix}}ShipCargo.md) | [**ShipCargo**]({{complexTypePrefix}}ShipCargo.md) |  | 
+**[produced](#produced)** | list, tuple,  | tuple,  |  | 
+**any_string_name** | dict, frozendict.frozendict, str, date, datetime, int, float, bool, decimal.Decimal, None, list, tuple, bytes, io.FileIO, io.BufferedReader | frozendict.frozendict, str, BoolClass, decimal.Decimal, NoneClass, tuple, bytes, FileIO | any string name can be used but the value must be the correct type | [optional]
+
+# produced
+
+## Model Type Info
+Input Type | Accessed Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+list, tuple,  | tuple,  |  | 
+
+### Tuple Items
+Class Name | Input Type | Accessed Type | Description | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+[items](#items) | dict, frozendict.frozendict,  | frozendict.frozendict,  |  | 
+
+# items
+
+## Model Type Info
+Input Type | Accessed Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+dict, frozendict.frozendict,  | frozendict.frozendict,  |  | 
+
+### Dictionary Keys
+Key | Input Type | Accessed Type | Description | Notes
+------------ | ------------- | ------------- | ------------- | -------------
+**tradeSymbol** | str,  | str,  |  | [optional] 
+**units** | decimal.Decimal, int,  | decimal.Decimal,  |  | [optional] 
+**any_string_name** | dict, frozendict.frozendict, str, date, datetime, int, float, bool, decimal.Decimal, None, list, tuple, bytes, io.FileIO, io.BufferedReader | frozendict.frozendict, str, BoolClass, decimal.Decimal, NoneClass, tuple, bytes, FileIO | any string name can be used but the value must be the correct type | [optional]
+
+# consumed
+
+## Model Type Info
+Input Type | Accessed Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+list, tuple,  | tuple,  |  | 
+
+### Tuple Items
+Class Name | Input Type | Accessed Type | Description | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+[items](#items) | dict, frozendict.frozendict,  | frozendict.frozendict,  |  | 
+
+# items
+
+## Model Type Info
+Input Type | Accessed Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+dict, frozendict.frozendict,  | frozendict.frozendict,  |  | 
+
+### Dictionary Keys
+Key | Input Type | Accessed Type | Description | Notes
+------------ | ------------- | ------------- | ------------- | -------------
+**tradeSymbol** | str,  | str,  |  | [optional] 
+**units** | decimal.Decimal, int,  | decimal.Decimal,  |  | [optional] 
 **any_string_name** | dict, frozendict.frozendict, str, date, datetime, int, float, bool, decimal.Decimal, None, list, tuple, bytes, io.FileIO, io.BufferedReader | frozendict.frozendict, str, BoolClass, decimal.Decimal, NoneClass, tuple, bytes, FileIO | any string name can be used but the value must be the correct type | [optional]
 
 ### Authorization

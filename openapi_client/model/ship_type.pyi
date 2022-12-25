@@ -69,3 +69,7 @@ class ShipType(
     @schemas.classproperty
     def ORE_HOUND(cls):
         return cls("SHIP_ORE_HOUND")
+    
+    @schemas.classproperty
+    def REFINING_FREIGHTER(cls):
+        return cls("SHIP_REFINING_FREIGHTER")

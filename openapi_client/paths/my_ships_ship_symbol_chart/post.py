@@ -25,6 +25,7 @@ import frozendict  # noqa: F401
 
 from openapi_client import schemas  # noqa: F401
 
+from openapi_client.model.waypoint import Waypoint
 from openapi_client.model.chart import Chart
 
 from . import path
@@ -80,6 +81,7 @@ class SchemaFor201ResponseBodyApplicationJson(
             
                 class MetaOapg:
                     required = {
+                        "waypoint",
                         "chart",
                     }
                     
@@ -88,19 +90,28 @@ class SchemaFor201ResponseBodyApplicationJson(
                         @staticmethod
                         def chart() -> typing.Type['Chart']:
                             return Chart
+                    
+                        @staticmethod
+                        def waypoint() -> typing.Type['Waypoint']:
+                            return Waypoint
                         __annotations__ = {
                             "chart": chart,
+                            "waypoint": waypoint,
                         }
                 
+                waypoint: 'Waypoint'
                 chart: 'Chart'
                 
                 @typing.overload
                 def __getitem__(self, name: typing_extensions.Literal["chart"]) -> 'Chart': ...
                 
                 @typing.overload
+                def __getitem__(self, name: typing_extensions.Literal["waypoint"]) -> 'Waypoint': ...
+                
+                @typing.overload
                 def __getitem__(self, name: str) -> schemas.UnsetAnyTypeSchema: ...
                 
-                def __getitem__(self, name: typing.Union[typing_extensions.Literal["chart", ], str]):
+                def __getitem__(self, name: typing.Union[typing_extensions.Literal["chart", "waypoint", ], str]):
                     # dict_instance[name] accessor
                     return super().__getitem__(name)
                 
@@ -109,15 +120,19 @@ class SchemaFor201ResponseBodyApplicationJson(
                 def get_item_oapg(self, name: typing_extensions.Literal["chart"]) -> 'Chart': ...
                 
                 @typing.overload
+                def get_item_oapg(self, name: typing_extensions.Literal["waypoint"]) -> 'Waypoint': ...
+                
+                @typing.overload
                 def get_item_oapg(self, name: str) -> typing.Union[schemas.UnsetAnyTypeSchema, schemas.Unset]: ...
                 
-                def get_item_oapg(self, name: typing.Union[typing_extensions.Literal["chart", ], str]):
+                def get_item_oapg(self, name: typing.Union[typing_extensions.Literal["chart", "waypoint", ], str]):
                     return super().get_item_oapg(name)
                 
             
                 def __new__(
                     cls,
                     *args: typing.Union[dict, frozendict.frozendict, ],
+                    waypoint: 'Waypoint',
                     chart: 'Chart',
                     _configuration: typing.Optional[schemas.Configuration] = None,
                     **kwargs: typing.Union[schemas.AnyTypeSchema, dict, frozendict.frozendict, str, date, datetime, uuid.UUID, int, float, decimal.Decimal, None, list, tuple, bytes],
@@ -125,6 +140,7 @@ class SchemaFor201ResponseBodyApplicationJson(
                     return super().__new__(
                         cls,
                         *args,
+                        waypoint=waypoint,
                         chart=chart,
                         _configuration=_configuration,
                         **kwargs,

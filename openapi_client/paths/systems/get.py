@@ -200,7 +200,7 @@ class BaseApi(api_client.Api):
             api_response.body and api_response.headers will not be deserialized into schema
             class instances
         """
-        used_path = path.value+"?limit=5"
+        used_path = path.value+"?limit=10000"
 
         _headers = HTTPHeaderDict()
         # TODO add cookie handling

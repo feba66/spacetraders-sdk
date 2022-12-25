@@ -39,6 +39,7 @@ class Survey(
     class MetaOapg:
         required = {
             "symbol",
+            "size",
             "signature",
             "expiration",
             "deposits",
@@ -89,14 +90,34 @@ class Survey(
                 schemas.DateTimeSchema
             ):
                 pass
+            
+            
+            class size(
+                schemas.EnumBase,
+                schemas.StrSchema
+            ):
+                
+                @schemas.classproperty
+                def SMALL(cls):
+                    return cls("SMALL")
+                
+                @schemas.classproperty
+                def MODERATE(cls):
+                    return cls("MODERATE")
+                
+                @schemas.classproperty
+                def LARGE(cls):
+                    return cls("LARGE")
             __annotations__ = {
                 "signature": signature,
                 "symbol": symbol,
                 "deposits": deposits,
                 "expiration": expiration,
+                "size": size,
             }
     
     symbol: MetaOapg.properties.symbol
+    size: MetaOapg.properties.size
     signature: MetaOapg.properties.signature
     expiration: MetaOapg.properties.expiration
     deposits: MetaOapg.properties.deposits
@@ -114,9 +135,12 @@ class Survey(
     def __getitem__(self, name: typing_extensions.Literal["expiration"]) -> MetaOapg.properties.expiration: ...
     
     @typing.overload
+    def __getitem__(self, name: typing_extensions.Literal["size"]) -> MetaOapg.properties.size: ...
+    
+    @typing.overload
     def __getitem__(self, name: str) -> schemas.UnsetAnyTypeSchema: ...
     
-    def __getitem__(self, name: typing.Union[typing_extensions.Literal["signature", "symbol", "deposits", "expiration", ], str]):
+    def __getitem__(self, name: typing.Union[typing_extensions.Literal["signature", "symbol", "deposits", "expiration", "size", ], str]):
         # dict_instance[name] accessor
         return super().__getitem__(name)
     
@@ -134,9 +158,12 @@ class Survey(
     def get_item_oapg(self, name: typing_extensions.Literal["expiration"]) -> MetaOapg.properties.expiration: ...
     
     @typing.overload
+    def get_item_oapg(self, name: typing_extensions.Literal["size"]) -> MetaOapg.properties.size: ...
+    
+    @typing.overload
     def get_item_oapg(self, name: str) -> typing.Union[schemas.UnsetAnyTypeSchema, schemas.Unset]: ...
     
-    def get_item_oapg(self, name: typing.Union[typing_extensions.Literal["signature", "symbol", "deposits", "expiration", ], str]):
+    def get_item_oapg(self, name: typing.Union[typing_extensions.Literal["signature", "symbol", "deposits", "expiration", "size", ], str]):
         return super().get_item_oapg(name)
     
 
@@ -144,6 +171,7 @@ class Survey(
         cls,
         *args: typing.Union[dict, frozendict.frozendict, ],
         symbol: typing.Union[MetaOapg.properties.symbol, str, ],
+        size: typing.Union[MetaOapg.properties.size, str, ],
         signature: typing.Union[MetaOapg.properties.signature, str, ],
         expiration: typing.Union[MetaOapg.properties.expiration, str, datetime, ],
         deposits: typing.Union[MetaOapg.properties.deposits, list, tuple, ],
@@ -154,6 +182,7 @@ class Survey(
             cls,
             *args,
             symbol=symbol,
+            size=size,
             signature=signature,
             expiration=expiration,
             deposits=deposits,

@@ -57,6 +57,9 @@ class ShipMount(
                         "MOUNT_GAS_SIPHON_I": "GAS_SIPHON_I",
                         "MOUNT_GAS_SIPHON_II": "GAS_SIPHON_II",
                         "MOUNT_GAS_SIPHON_III": "GAS_SIPHON_III",
+                        "MOUNT_SURVEYOR_I": "SURVEYOR_I",
+                        "MOUNT_SURVEYOR_II": "SURVEYOR_II",
+                        "MOUNT_SURVEYOR_III": "SURVEYOR_III",
                         "MOUNT_SENSOR_ARRAY_I": "SENSOR_ARRAY_I",
                         "MOUNT_SENSOR_ARRAY_II": "SENSOR_ARRAY_II",
                         "MOUNT_SENSOR_ARRAY_III": "SENSOR_ARRAY_III",
@@ -79,6 +82,18 @@ class ShipMount(
                 @schemas.classproperty
                 def GAS_SIPHON_III(cls):
                     return cls("MOUNT_GAS_SIPHON_III")
+                
+                @schemas.classproperty
+                def SURVEYOR_I(cls):
+                    return cls("MOUNT_SURVEYOR_I")
+                
+                @schemas.classproperty
+                def SURVEYOR_II(cls):
+                    return cls("MOUNT_SURVEYOR_II")
+                
+                @schemas.classproperty
+                def SURVEYOR_III(cls):
+                    return cls("MOUNT_SURVEYOR_III")
                 
                 @schemas.classproperty
                 def SENSOR_ARRAY_I(cls):
@@ -130,12 +145,116 @@ class ShipMount(
             
                 class MetaOapg:
                     inclusive_minimum = 0
+            
+            
+            class deposits(
+                schemas.ListSchema
+            ):
+            
+            
+                class MetaOapg:
+                    
+                    
+                    class items(
+                        schemas.EnumBase,
+                        schemas.StrSchema
+                    ):
+                    
+                    
+                        class MetaOapg:
+                            enum_value_to_name = {
+                                "QUARTZ_SAND": "QUARTZ_SAND",
+                                "SILICON_CRYSTALS": "SILICON_CRYSTALS",
+                                "PRECIOUS_STONES": "PRECIOUS_STONES",
+                                "ICE_WATER": "ICE_WATER",
+                                "AMMONIA_ICE": "AMMONIA_ICE",
+                                "IRON_ORE": "IRON_ORE",
+                                "COPPER_ORE": "COPPER_ORE",
+                                "SILVER_ORE": "SILVER_ORE",
+                                "ALUMINUM_ORE": "ALUMINUM_ORE",
+                                "GOLD_ORE": "GOLD_ORE",
+                                "PLATINUM_ORE": "PLATINUM_ORE",
+                                "DIAMONDS": "DIAMONDS",
+                                "URANITE_ORE": "URANITE_ORE",
+                                "MERITIUM_ORE": "MERITIUM_ORE",
+                            }
+                        
+                        @schemas.classproperty
+                        def QUARTZ_SAND(cls):
+                            return cls("QUARTZ_SAND")
+                        
+                        @schemas.classproperty
+                        def SILICON_CRYSTALS(cls):
+                            return cls("SILICON_CRYSTALS")
+                        
+                        @schemas.classproperty
+                        def PRECIOUS_STONES(cls):
+                            return cls("PRECIOUS_STONES")
+                        
+                        @schemas.classproperty
+                        def ICE_WATER(cls):
+                            return cls("ICE_WATER")
+                        
+                        @schemas.classproperty
+                        def AMMONIA_ICE(cls):
+                            return cls("AMMONIA_ICE")
+                        
+                        @schemas.classproperty
+                        def IRON_ORE(cls):
+                            return cls("IRON_ORE")
+                        
+                        @schemas.classproperty
+                        def COPPER_ORE(cls):
+                            return cls("COPPER_ORE")
+                        
+                        @schemas.classproperty
+                        def SILVER_ORE(cls):
+                            return cls("SILVER_ORE")
+                        
+                        @schemas.classproperty
+                        def ALUMINUM_ORE(cls):
+                            return cls("ALUMINUM_ORE")
+                        
+                        @schemas.classproperty
+                        def GOLD_ORE(cls):
+                            return cls("GOLD_ORE")
+                        
+                        @schemas.classproperty
+                        def PLATINUM_ORE(cls):
+                            return cls("PLATINUM_ORE")
+                        
+                        @schemas.classproperty
+                        def DIAMONDS(cls):
+                            return cls("DIAMONDS")
+                        
+                        @schemas.classproperty
+                        def URANITE_ORE(cls):
+                            return cls("URANITE_ORE")
+                        
+                        @schemas.classproperty
+                        def MERITIUM_ORE(cls):
+                            return cls("MERITIUM_ORE")
+            
+                def __new__(
+                    cls,
+                    arg: typing.Union[typing.Tuple[typing.Union[MetaOapg.items, str, ]], typing.List[typing.Union[MetaOapg.items, str, ]]],
+                    _configuration: typing.Optional[schemas.Configuration] = None,
+                ) -> 'deposits':
+                    return super().__new__(
+                        cls,
+                        arg,
+                        _configuration=_configuration,
+                    )
+            
+                def __getitem__(self, i: int) -> MetaOapg.items:
+                    return super().__getitem__(i)
             __annotations__ = {
                 "symbol": symbol,
                 "name": name,
                 "requirements": requirements,
                 "description": description,
                 "strength": strength,
+                "deposits": deposits,
             }
     
     symbol: MetaOapg.properties.symbol
@@ -158,9 +277,12 @@ class ShipMount(
     def __getitem__(self, name: typing_extensions.Literal["strength"]) -> MetaOapg.properties.strength: ...
     
     @typing.overload
+    def __getitem__(self, name: typing_extensions.Literal["deposits"]) -> MetaOapg.properties.deposits: ...
+    
+    @typing.overload
     def __getitem__(self, name: str) -> schemas.UnsetAnyTypeSchema: ...
     
-    def __getitem__(self, name: typing.Union[typing_extensions.Literal["symbol", "name", "requirements", "description", "strength", ], str]):
+    def __getitem__(self, name: typing.Union[typing_extensions.Literal["symbol", "name", "requirements", "description", "strength", "deposits", ], str]):
         # dict_instance[name] accessor
         return super().__getitem__(name)
     
@@ -181,9 +303,12 @@ class ShipMount(
     def get_item_oapg(self, name: typing_extensions.Literal["strength"]) -> typing.Union[MetaOapg.properties.strength, schemas.Unset]: ...
     
     @typing.overload
+    def get_item_oapg(self, name: typing_extensions.Literal["deposits"]) -> typing.Union[MetaOapg.properties.deposits, schemas.Unset]: ...
+    
+    @typing.overload
     def get_item_oapg(self, name: str) -> typing.Union[schemas.UnsetAnyTypeSchema, schemas.Unset]: ...
     
-    def get_item_oapg(self, name: typing.Union[typing_extensions.Literal["symbol", "name", "requirements", "description", "strength", ], str]):
+    def get_item_oapg(self, name: typing.Union[typing_extensions.Literal["symbol", "name", "requirements", "description", "strength", "deposits", ], str]):
         return super().get_item_oapg(name)
     
 
@@ -195,6 +320,7 @@ class ShipMount(
         name: typing.Union[MetaOapg.properties.name, str, ],
         description: typing.Union[MetaOapg.properties.description, str, schemas.Unset] = schemas.unset,
         strength: typing.Union[MetaOapg.properties.strength, decimal.Decimal, int, schemas.Unset] = schemas.unset,
+        deposits: typing.Union[MetaOapg.properties.deposits, list, tuple, schemas.Unset] = schemas.unset,
         _configuration: typing.Optional[schemas.Configuration] = None,
         **kwargs: typing.Union[schemas.AnyTypeSchema, dict, frozendict.frozendict, str, date, datetime, uuid.UUID, int, float, decimal.Decimal, None, list, tuple, bytes],
     ) -> 'ShipMount':
@@ -206,6 +332,7 @@ class ShipMount(
             name=name,
             description=description,
             strength=strength,
+            deposits=deposits,
             _configuration=_configuration,
             **kwargs,
         )

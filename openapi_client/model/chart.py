@@ -39,12 +39,17 @@ class Chart(
     class MetaOapg:
         
         class properties:
+            waypointSymbol = schemas.StrSchema
             submittedBy = schemas.StrSchema
             submittedOn = schemas.DateTimeSchema
             __annotations__ = {
+                "waypointSymbol": waypointSymbol,
                 "submittedBy": submittedBy,
                 "submittedOn": submittedOn,
             }
+    
+    @typing.overload
+    def __getitem__(self, name: typing_extensions.Literal["waypointSymbol"]) -> MetaOapg.properties.waypointSymbol: ...
     
     @typing.overload
     def __getitem__(self, name: typing_extensions.Literal["submittedBy"]) -> MetaOapg.properties.submittedBy: ...
@@ -55,10 +60,13 @@ class Chart(
     @typing.overload
     def __getitem__(self, name: str) -> schemas.UnsetAnyTypeSchema: ...
     
-    def __getitem__(self, name: typing.Union[typing_extensions.Literal["submittedBy", "submittedOn", ], str]):
+    def __getitem__(self, name: typing.Union[typing_extensions.Literal["waypointSymbol", "submittedBy", "submittedOn", ], str]):
         # dict_instance[name] accessor
         return super().__getitem__(name)
     
+    
+    @typing.overload
+    def get_item_oapg(self, name: typing_extensions.Literal["waypointSymbol"]) -> typing.Union[MetaOapg.properties.waypointSymbol, schemas.Unset]: ...
     
     @typing.overload
     def get_item_oapg(self, name: typing_extensions.Literal["submittedBy"]) -> typing.Union[MetaOapg.properties.submittedBy, schemas.Unset]: ...
@@ -69,13 +77,14 @@ class Chart(
     @typing.overload
     def get_item_oapg(self, name: str) -> typing.Union[schemas.UnsetAnyTypeSchema, schemas.Unset]: ...
     
-    def get_item_oapg(self, name: typing.Union[typing_extensions.Literal["submittedBy", "submittedOn", ], str]):
+    def get_item_oapg(self, name: typing.Union[typing_extensions.Literal["waypointSymbol", "submittedBy", "submittedOn", ], str]):
         return super().get_item_oapg(name)
     
 
     def __new__(
         cls,
         *args: typing.Union[dict, frozendict.frozendict, ],
+        waypointSymbol: typing.Union[MetaOapg.properties.waypointSymbol, str, schemas.Unset] = schemas.unset,
         submittedBy: typing.Union[MetaOapg.properties.submittedBy, str, schemas.Unset] = schemas.unset,
         submittedOn: typing.Union[MetaOapg.properties.submittedOn, str, datetime, schemas.Unset] = schemas.unset,
         _configuration: typing.Optional[schemas.Configuration] = None,
@@ -84,6 +93,7 @@ class Chart(
         return super().__new__(
             cls,
             *args,
+            waypointSymbol=waypointSymbol,
             submittedBy=submittedBy,
             submittedOn=submittedOn,
             _configuration=_configuration,

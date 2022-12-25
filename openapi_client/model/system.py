@@ -223,7 +223,7 @@ class System(
             _configuration=_configuration,
             **kwargs,
         )
-    
+
 from openapi_client.model.system_faction import SystemFaction
 from openapi_client.model.system_type import SystemType
 from openapi_client.model.system_waypoint import SystemWaypoint

@@ -41,19 +41,11 @@ class ScannedShip(
             "symbol",
             "nav",
             "engine",
-            "reactor",
-            "mounts",
             "registration",
-            "frame",
         }
         
         class properties:
-            
-            
-            class symbol(
-                schemas.StrSchema
-            ):
-                pass
+            symbol = schemas.StrSchema
         
             @staticmethod
             def registration() -> typing.Type['ShipRegistration']:
@@ -62,18 +54,171 @@ class ScannedShip(
             @staticmethod
             def nav() -> typing.Type['ShipNav']:
                 return ShipNav
-        
-            @staticmethod
-            def frame() -> typing.Type['ShipFrame']:
-                return ShipFrame
-        
-            @staticmethod
-            def reactor() -> typing.Type['ShipReactor']:
-                return ShipReactor
-        
-            @staticmethod
-            def engine() -> typing.Type['ShipEngine']:
-                return ShipEngine
+            
+            
+            class engine(
+                schemas.DictSchema
+            ):
+            
+            
+                class MetaOapg:
+                    required = {
+                        "symbol",
+                    }
+                    
+                    class properties:
+                        symbol = schemas.StrSchema
+                        __annotations__ = {
+                            "symbol": symbol,
+                        }
+                
+                symbol: MetaOapg.properties.symbol
+                
+                @typing.overload
+                def __getitem__(self, name: typing_extensions.Literal["symbol"]) -> MetaOapg.properties.symbol: ...
+                
+                @typing.overload
+                def __getitem__(self, name: str) -> schemas.UnsetAnyTypeSchema: ...
+                
+                def __getitem__(self, name: typing.Union[typing_extensions.Literal["symbol", ], str]):
+                    # dict_instance[name] accessor
+                    return super().__getitem__(name)
+                
+                
+                @typing.overload
+                def get_item_oapg(self, name: typing_extensions.Literal["symbol"]) -> MetaOapg.properties.symbol: ...
+                
+                @typing.overload
+                def get_item_oapg(self, name: str) -> typing.Union[schemas.UnsetAnyTypeSchema, schemas.Unset]: ...
+                
+                def get_item_oapg(self, name: typing.Union[typing_extensions.Literal["symbol", ], str]):
+                    return super().get_item_oapg(name)
+                
+            
+                def __new__(
+                    cls,
+                    *args: typing.Union[dict, frozendict.frozendict, ],
+                    symbol: typing.Union[MetaOapg.properties.symbol, str, ],
+                    _configuration: typing.Optional[schemas.Configuration] = None,
+                    **kwargs: typing.Union[schemas.AnyTypeSchema, dict, frozendict.frozendict, str, date, datetime, uuid.UUID, int, float, decimal.Decimal, None, list, tuple, bytes],
+                ) -> 'engine':
+                    return super().__new__(
+                        cls,
+                        *args,
+                        symbol=symbol,
+                        _configuration=_configuration,
+                        **kwargs,
+                    )
+            
+            
+            class frame(
+                schemas.DictSchema
+            ):
+            
+            
+                class MetaOapg:
+                    required = {
+                        "symbol",
+                    }
+                    
+                    class properties:
+                        symbol = schemas.StrSchema
+                        __annotations__ = {
+                            "symbol": symbol,
+                        }
+                
+                symbol: MetaOapg.properties.symbol
+                
+                @typing.overload
+                def __getitem__(self, name: typing_extensions.Literal["symbol"]) -> MetaOapg.properties.symbol: ...
+                
+                @typing.overload
+                def __getitem__(self, name: str) -> schemas.UnsetAnyTypeSchema: ...
+                
+                def __getitem__(self, name: typing.Union[typing_extensions.Literal["symbol", ], str]):
+                    # dict_instance[name] accessor
+                    return super().__getitem__(name)
+                
+                
+                @typing.overload
+                def get_item_oapg(self, name: typing_extensions.Literal["symbol"]) -> MetaOapg.properties.symbol: ...
+                
+                @typing.overload
+                def get_item_oapg(self, name: str) -> typing.Union[schemas.UnsetAnyTypeSchema, schemas.Unset]: ...
+                
+                def get_item_oapg(self, name: typing.Union[typing_extensions.Literal["symbol", ], str]):
+                    return super().get_item_oapg(name)
+                
+            
+                def __new__(
+                    cls,
+                    *args: typing.Union[dict, frozendict.frozendict, ],
+                    symbol: typing.Union[MetaOapg.properties.symbol, str, ],
+                    _configuration: typing.Optional[schemas.Configuration] = None,
+                    **kwargs: typing.Union[schemas.AnyTypeSchema, dict, frozendict.frozendict, str, date, datetime, uuid.UUID, int, float, decimal.Decimal, None, list, tuple, bytes],
+                ) -> 'frame':
+                    return super().__new__(
+                        cls,
+                        *args,
+                        symbol=symbol,
+                        _configuration=_configuration,
+                        **kwargs,
+                    )
+            
+            
+            class reactor(
+                schemas.DictSchema
+            ):
+            
+            
+                class MetaOapg:
+                    required = {
+                        "symbol",
+                    }
+                    
+                    class properties:
+                        symbol = schemas.StrSchema
+                        __annotations__ = {
+                            "symbol": symbol,
+                        }
+                
+                symbol: MetaOapg.properties.symbol
+                
+                @typing.overload
+                def __getitem__(self, name: typing_extensions.Literal["symbol"]) -> MetaOapg.properties.symbol: ...
+                
+                @typing.overload
+                def __getitem__(self, name: str) -> schemas.UnsetAnyTypeSchema: ...
+                
+                def __getitem__(self, name: typing.Union[typing_extensions.Literal["symbol", ], str]):
+                    # dict_instance[name] accessor
+                    return super().__getitem__(name)
+                
+                
+                @typing.overload
+                def get_item_oapg(self, name: typing_extensions.Literal["symbol"]) -> MetaOapg.properties.symbol: ...
+                
+                @typing.overload
+                def get_item_oapg(self, name: str) -> typing.Union[schemas.UnsetAnyTypeSchema, schemas.Unset]: ...
+                
+                def get_item_oapg(self, name: typing.Union[typing_extensions.Literal["symbol", ], str]):
+                    return super().get_item_oapg(name)
+                
+            
+                def __new__(
+                    cls,
+                    *args: typing.Union[dict, frozendict.frozendict, ],
+                    symbol: typing.Union[MetaOapg.properties.symbol, str, ],
+                    _configuration: typing.Optional[schemas.Configuration] = None,
+                    **kwargs: typing.Union[schemas.AnyTypeSchema, dict, frozendict.frozendict, str, date, datetime, uuid.UUID, int, float, decimal.Decimal, None, list, tuple, bytes],
+                ) -> 'reactor':
+                    return super().__new__(
+                        cls,
+                        *args,
+                        symbol=symbol,
+                        _configuration=_configuration,
+                        **kwargs,
+                    )
             
             
             class mounts(
@@ -83,13 +228,64 @@ class ScannedShip(
             
                 class MetaOapg:
                     
-                    @staticmethod
-                    def items() -> typing.Type['ShipMount']:
-                        return ShipMount
+                    
+                    class items(
+                        schemas.DictSchema
+                    ):
+                    
+                    
+                        class MetaOapg:
+                            required = {
+                                "symbol",
+                            }
+                            
+                            class properties:
+                                symbol = schemas.StrSchema
+                                __annotations__ = {
+                                    "symbol": symbol,
+                                }
+                        
+                        symbol: MetaOapg.properties.symbol
+                        
+                        @typing.overload
+                        def __getitem__(self, name: typing_extensions.Literal["symbol"]) -> MetaOapg.properties.symbol: ...
+                        
+                        @typing.overload
+                        def __getitem__(self, name: str) -> schemas.UnsetAnyTypeSchema: ...
+                        
+                        def __getitem__(self, name: typing.Union[typing_extensions.Literal["symbol", ], str]):
+                            # dict_instance[name] accessor
+                            return super().__getitem__(name)
+                        
+                        
+                        @typing.overload
+                        def get_item_oapg(self, name: typing_extensions.Literal["symbol"]) -> MetaOapg.properties.symbol: ...
+                        
+                        @typing.overload
+                        def get_item_oapg(self, name: str) -> typing.Union[schemas.UnsetAnyTypeSchema, schemas.Unset]: ...
+                        
+                        def get_item_oapg(self, name: typing.Union[typing_extensions.Literal["symbol", ], str]):
+                            return super().get_item_oapg(name)
+                        
+                    
+                        def __new__(
+                            cls,
+                            *args: typing.Union[dict, frozendict.frozendict, ],
+                            symbol: typing.Union[MetaOapg.properties.symbol, str, ],
+                            _configuration: typing.Optional[schemas.Configuration] = None,
+                            **kwargs: typing.Union[schemas.AnyTypeSchema, dict, frozendict.frozendict, str, date, datetime, uuid.UUID, int, float, decimal.Decimal, None, list, tuple, bytes],
+                        ) -> 'items':
+                            return super().__new__(
+                                cls,
+                                *args,
+                                symbol=symbol,
+                                _configuration=_configuration,
+                                **kwargs,
+                            )
             
                 def __new__(
                     cls,
-                    arg: typing.Union[typing.Tuple['ShipMount'], typing.List['ShipMount']],
+                    arg: typing.Union[typing.Tuple[typing.Union[MetaOapg.items, dict, frozendict.frozendict, ]], typing.List[typing.Union[MetaOapg.items, dict, frozendict.frozendict, ]]],
                     _configuration: typing.Optional[schemas.Configuration] = None,
                 ) -> 'mounts':
                     return super().__new__(
@@ -98,25 +294,22 @@ class ScannedShip(
                         _configuration=_configuration,
                     )
             
-                def __getitem__(self, i: int) -> 'ShipMount':
+                def __getitem__(self, i: int) -> MetaOapg.items:
                     return super().__getitem__(i)
             __annotations__ = {
                 "symbol": symbol,
                 "registration": registration,
                 "nav": nav,
+                "engine": engine,
                 "frame": frame,
                 "reactor": reactor,
-                "engine": engine,
                 "mounts": mounts,
             }
     
     symbol: MetaOapg.properties.symbol
     nav: 'ShipNav'
-    engine: 'ShipEngine'
-    reactor: 'ShipReactor'
-    mounts: MetaOapg.properties.mounts
+    engine: MetaOapg.properties.engine
     registration: 'ShipRegistration'
-    frame: 'ShipFrame'
     
     @typing.overload
     def __getitem__(self, name: typing_extensions.Literal["symbol"]) -> MetaOapg.properties.symbol: ...
@@ -128,13 +321,13 @@ class ScannedShip(
     def __getitem__(self, name: typing_extensions.Literal["nav"]) -> 'ShipNav': ...
     
     @typing.overload
-    def __getitem__(self, name: typing_extensions.Literal["frame"]) -> 'ShipFrame': ...
+    def __getitem__(self, name: typing_extensions.Literal["engine"]) -> MetaOapg.properties.engine: ...
     
     @typing.overload
-    def __getitem__(self, name: typing_extensions.Literal["reactor"]) -> 'ShipReactor': ...
+    def __getitem__(self, name: typing_extensions.Literal["frame"]) -> MetaOapg.properties.frame: ...
     
     @typing.overload
-    def __getitem__(self, name: typing_extensions.Literal["engine"]) -> 'ShipEngine': ...
+    def __getitem__(self, name: typing_extensions.Literal["reactor"]) -> MetaOapg.properties.reactor: ...
     
     @typing.overload
     def __getitem__(self, name: typing_extensions.Literal["mounts"]) -> MetaOapg.properties.mounts: ...
@@ -142,7 +335,7 @@ class ScannedShip(
     @typing.overload
     def __getitem__(self, name: str) -> schemas.UnsetAnyTypeSchema: ...
     
-    def __getitem__(self, name: typing.Union[typing_extensions.Literal["symbol", "registration", "nav", "frame", "reactor", "engine", "mounts", ], str]):
+    def __getitem__(self, name: typing.Union[typing_extensions.Literal["symbol", "registration", "nav", "engine", "frame", "reactor", "mounts", ], str]):
         # dict_instance[name] accessor
         return super().__getitem__(name)
     
@@ -157,21 +350,21 @@ class ScannedShip(
     def get_item_oapg(self, name: typing_extensions.Literal["nav"]) -> 'ShipNav': ...
     
     @typing.overload
-    def get_item_oapg(self, name: typing_extensions.Literal["frame"]) -> 'ShipFrame': ...
+    def get_item_oapg(self, name: typing_extensions.Literal["engine"]) -> MetaOapg.properties.engine: ...
     
     @typing.overload
-    def get_item_oapg(self, name: typing_extensions.Literal["reactor"]) -> 'ShipReactor': ...
+    def get_item_oapg(self, name: typing_extensions.Literal["frame"]) -> typing.Union[MetaOapg.properties.frame, schemas.Unset]: ...
     
     @typing.overload
-    def get_item_oapg(self, name: typing_extensions.Literal["engine"]) -> 'ShipEngine': ...
+    def get_item_oapg(self, name: typing_extensions.Literal["reactor"]) -> typing.Union[MetaOapg.properties.reactor, schemas.Unset]: ...
     
     @typing.overload
-    def get_item_oapg(self, name: typing_extensions.Literal["mounts"]) -> MetaOapg.properties.mounts: ...
+    def get_item_oapg(self, name: typing_extensions.Literal["mounts"]) -> typing.Union[MetaOapg.properties.mounts, schemas.Unset]: ...
     
     @typing.overload
     def get_item_oapg(self, name: str) -> typing.Union[schemas.UnsetAnyTypeSchema, schemas.Unset]: ...
     
-    def get_item_oapg(self, name: typing.Union[typing_extensions.Literal["symbol", "registration", "nav", "frame", "reactor", "engine", "mounts", ], str]):
+    def get_item_oapg(self, name: typing.Union[typing_extensions.Literal["symbol", "registration", "nav", "engine", "frame", "reactor", "mounts", ], str]):
         return super().get_item_oapg(name)
     
 
@@ -180,11 +373,11 @@ class ScannedShip(
         *args: typing.Union[dict, frozendict.frozendict, ],
         symbol: typing.Union[MetaOapg.properties.symbol, str, ],
         nav: 'ShipNav',
-        engine: 'ShipEngine',
-        reactor: 'ShipReactor',
-        mounts: typing.Union[MetaOapg.properties.mounts, list, tuple, ],
+        engine: typing.Union[MetaOapg.properties.engine, dict, frozendict.frozendict, ],
         registration: 'ShipRegistration',
-        frame: 'ShipFrame',
+        frame: typing.Union[MetaOapg.properties.frame, dict, frozendict.frozendict, schemas.Unset] = schemas.unset,
+        reactor: typing.Union[MetaOapg.properties.reactor, dict, frozendict.frozendict, schemas.Unset] = schemas.unset,
+        mounts: typing.Union[MetaOapg.properties.mounts, list, tuple, schemas.Unset] = schemas.unset,
         _configuration: typing.Optional[schemas.Configuration] = None,
         **kwargs: typing.Union[schemas.AnyTypeSchema, dict, frozendict.frozendict, str, date, datetime, uuid.UUID, int, float, decimal.Decimal, None, list, tuple, bytes],
     ) -> 'ScannedShip':
@@ -194,17 +387,13 @@ class ScannedShip(
             symbol=symbol,
             nav=nav,
             engine=engine,
-            reactor=reactor,
-            mounts=mounts,
             registration=registration,
             frame=frame,
+            reactor=reactor,
+            mounts=mounts,
             _configuration=_configuration,
             **kwargs,
         )
 
-from openapi_client.model.ship_engine import ShipEngine
-from openapi_client.model.ship_frame import ShipFrame
-from openapi_client.model.ship_mount import ShipMount
 from openapi_client.model.ship_nav import ShipNav
-from openapi_client.model.ship_reactor import ShipReactor
 from openapi_client.model.ship_registration import ShipRegistration

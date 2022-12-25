@@ -14,7 +14,6 @@ from openapi_client.paths.my_ships_ship_symbol_chart.post import CreateChart
 from openapi_client.paths.my_ships_ship_symbol_scan_ships.post import CreateShipShipScan
 from openapi_client.paths.my_ships_ship_symbol_scan_systems.post import CreateShipSystemScan
 from openapi_client.paths.my_ships_ship_symbol_survey.post import CreateSurvey
-from openapi_client.paths.my_ships_ship_symbol_deploy.post import DeployAsset
 from openapi_client.paths.my_ships_ship_symbol_dock.post import DockShip
 from openapi_client.paths.my_ships_ship_symbol_extract.post import ExtractResources
 from openapi_client.paths.my_ships_ship_symbol.get import GetMyShip
@@ -28,6 +27,7 @@ from openapi_client.paths.my_ships_ship_symbol_purchase.post import PurchaseCarg
 from openapi_client.paths.my_ships.post import PurchaseShip
 from openapi_client.paths.my_ships_ship_symbol_refuel.post import RefuelShip
 from openapi_client.paths.my_ships_ship_symbol_sell.post import SellCargo
+from openapi_client.paths.my_ships_ship_symbol_refine.post import ShipRefine
 from openapi_client.paths.my_ships_ship_symbol_transfer.post import TransferCargo
 from openapi_client.paths.my_ships_ship_symbol_warp.post import WarpShip
 
@@ -37,7 +37,6 @@ class FleetApi(
     CreateShipShipScan,
     CreateShipSystemScan,
     CreateSurvey,
-    DeployAsset,
     DockShip,
     ExtractResources,
     GetMyShip,
@@ -51,6 +50,7 @@ class FleetApi(
     PurchaseShip,
     RefuelShip,
     SellCargo,
+    ShipRefine,
     TransferCargo,
     WarpShip,
 ):

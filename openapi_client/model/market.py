@@ -39,6 +39,7 @@ class Market(
             "symbol",
             "imports",
             "exports",
+            "exchange",
         }
         
         class properties:
@@ -52,59 +53,13 @@ class Market(
             
                 class MetaOapg:
                     
-                    
-                    class items(
-                        schemas.DictSchema
-                    ):
-                    
-                    
-                        class MetaOapg:
-                            
-                            class properties:
-                                symbol = schemas.StrSchema
-                                __annotations__ = {
-                                    "symbol": symbol,
-                                }
-                        
-                        @typing.overload
-                        def __getitem__(self, name: typing_extensions.Literal["symbol"]) -> MetaOapg.properties.symbol: ...
-                        
-                        @typing.overload
-                        def __getitem__(self, name: str) -> schemas.UnsetAnyTypeSchema: ...
-                        
-                        def __getitem__(self, name: typing.Union[typing_extensions.Literal["symbol", ], str]):
-                            # dict_instance[name] accessor
-                            return super().__getitem__(name)
-                        
-                        
-                        @typing.overload
-                        def get_item_oapg(self, name: typing_extensions.Literal["symbol"]) -> typing.Union[MetaOapg.properties.symbol, schemas.Unset]: ...
-                        
-                        @typing.overload
-                        def get_item_oapg(self, name: str) -> typing.Union[schemas.UnsetAnyTypeSchema, schemas.Unset]: ...
-                        
-                        def get_item_oapg(self, name: typing.Union[typing_extensions.Literal["symbol", ], str]):
-                            return super().get_item_oapg(name)
-                        
-                    
-                        def __new__(
-                            cls,
-                            *args: typing.Union[dict, frozendict.frozendict, ],
-                            symbol: typing.Union[MetaOapg.properties.symbol, str, schemas.Unset] = schemas.unset,
-                            _configuration: typing.Optional[schemas.Configuration] = None,
-                            **kwargs: typing.Union[schemas.AnyTypeSchema, dict, frozendict.frozendict, str, date, datetime, uuid.UUID, int, float, decimal.Decimal, None, list, tuple, bytes],
-                        ) -> 'items':
-                            return super().__new__(
-                                cls,
-                                *args,
-                                symbol=symbol,
-                                _configuration=_configuration,
-                                **kwargs,
-                            )
+                    @staticmethod
+                    def items() -> typing.Type['TradeGood']:
+                        return TradeGood
             
                 def __new__(
                     cls,
-                    arg: typing.Union[typing.Tuple[typing.Union[MetaOapg.items, dict, frozendict.frozendict, ]], typing.List[typing.Union[MetaOapg.items, dict, frozendict.frozendict, ]]],
+                    arg: typing.Union[typing.Tuple['TradeGood'], typing.List['TradeGood']],
                     _configuration: typing.Optional[schemas.Configuration] = None,
                 ) -> 'exports':
                     return super().__new__(
@@ -113,7 +68,7 @@ class Market(
                         _configuration=_configuration,
                     )
             
-                def __getitem__(self, i: int) -> MetaOapg.items:
+                def __getitem__(self, i: int) -> 'TradeGood':
                     return super().__getitem__(i)
             
             
@@ -124,59 +79,13 @@ class Market(
             
                 class MetaOapg:
                     
-                    
-                    class items(
-                        schemas.DictSchema
-                    ):
-                    
-                    
-                        class MetaOapg:
-                            
-                            class properties:
-                                symbol = schemas.StrSchema
-                                __annotations__ = {
-                                    "symbol": symbol,
-                                }
-                        
-                        @typing.overload
-                        def __getitem__(self, name: typing_extensions.Literal["symbol"]) -> MetaOapg.properties.symbol: ...
-                        
-                        @typing.overload
-                        def __getitem__(self, name: str) -> schemas.UnsetAnyTypeSchema: ...
-                        
-                        def __getitem__(self, name: typing.Union[typing_extensions.Literal["symbol", ], str]):
-                            # dict_instance[name] accessor
-                            return super().__getitem__(name)
-                        
-                        
-                        @typing.overload
-                        def get_item_oapg(self, name: typing_extensions.Literal["symbol"]) -> typing.Union[MetaOapg.properties.symbol, schemas.Unset]: ...
-                        
-                        @typing.overload
-                        def get_item_oapg(self, name: str) -> typing.Union[schemas.UnsetAnyTypeSchema, schemas.Unset]: ...
-                        
-                        def get_item_oapg(self, name: typing.Union[typing_extensions.Literal["symbol", ], str]):
-                            return super().get_item_oapg(name)
-                        
-                    
-                        def __new__(
-                            cls,
-                            *args: typing.Union[dict, frozendict.frozendict, ],
-                            symbol: typing.Union[MetaOapg.properties.symbol, str, schemas.Unset] = schemas.unset,
-                            _configuration: typing.Optional[schemas.Configuration] = None,
-                            **kwargs: typing.Union[schemas.AnyTypeSchema, dict, frozendict.frozendict, str, date, datetime, uuid.UUID, int, float, decimal.Decimal, None, list, tuple, bytes],
-                        ) -> 'items':
-                            return super().__new__(
-                                cls,
-                                *args,
-                                symbol=symbol,
-                                _configuration=_configuration,
-                                **kwargs,
-                            )
+                    @staticmethod
+                    def items() -> typing.Type['TradeGood']:
+                        return TradeGood
             
                 def __new__(
                     cls,
-                    arg: typing.Union[typing.Tuple[typing.Union[MetaOapg.items, dict, frozendict.frozendict, ]], typing.List[typing.Union[MetaOapg.items, dict, frozendict.frozendict, ]]],
+                    arg: typing.Union[typing.Tuple['TradeGood'], typing.List['TradeGood']],
                     _configuration: typing.Optional[schemas.Configuration] = None,
                 ) -> 'imports':
                     return super().__new__(
@@ -185,7 +94,33 @@ class Market(
                         _configuration=_configuration,
                     )
             
-                def __getitem__(self, i: int) -> MetaOapg.items:
+                def __getitem__(self, i: int) -> 'TradeGood':
+                    return super().__getitem__(i)
+            
+            
+            class exchange(
+                schemas.ListSchema
+            ):
+            
+            
+                class MetaOapg:
+                    
+                    @staticmethod
+                    def items() -> typing.Type['TradeGood']:
+                        return TradeGood
+            
+                def __new__(
+                    cls,
+                    arg: typing.Union[typing.Tuple['TradeGood'], typing.List['TradeGood']],
+                    _configuration: typing.Optional[schemas.Configuration] = None,
+                ) -> 'exchange':
+                    return super().__new__(
+                        cls,
+                        arg,
+                        _configuration=_configuration,
+                    )
+            
+                def __getitem__(self, i: int) -> 'TradeGood':
                     return super().__getitem__(i)
             
             
@@ -243,6 +178,7 @@ class Market(
                 "symbol": symbol,
                 "exports": exports,
                 "imports": imports,
+                "exchange": exchange,
                 "transactions": transactions,
                 "tradeGoods": tradeGoods,
             }
@@ -250,6 +186,7 @@ class Market(
     symbol: MetaOapg.properties.symbol
     imports: MetaOapg.properties.imports
     exports: MetaOapg.properties.exports
+    exchange: MetaOapg.properties.exchange
     
     @typing.overload
     def __getitem__(self, name: typing_extensions.Literal["symbol"]) -> MetaOapg.properties.symbol: ...
@@ -261,6 +198,9 @@ class Market(
     def __getitem__(self, name: typing_extensions.Literal["imports"]) -> MetaOapg.properties.imports: ...
     
     @typing.overload
+    def __getitem__(self, name: typing_extensions.Literal["exchange"]) -> MetaOapg.properties.exchange: ...
+    
+    @typing.overload
     def __getitem__(self, name: typing_extensions.Literal["transactions"]) -> MetaOapg.properties.transactions: ...
     
     @typing.overload
@@ -269,7 +209,7 @@ class Market(
     @typing.overload
     def __getitem__(self, name: str) -> schemas.UnsetAnyTypeSchema: ...
     
-    def __getitem__(self, name: typing.Union[typing_extensions.Literal["symbol", "exports", "imports", "transactions", "tradeGoods", ], str]):
+    def __getitem__(self, name: typing.Union[typing_extensions.Literal["symbol", "exports", "imports", "exchange", "transactions", "tradeGoods", ], str]):
         # dict_instance[name] accessor
         return super().__getitem__(name)
     
@@ -284,6 +224,9 @@ class Market(
     def get_item_oapg(self, name: typing_extensions.Literal["imports"]) -> MetaOapg.properties.imports: ...
     
     @typing.overload
+    def get_item_oapg(self, name: typing_extensions.Literal["exchange"]) -> MetaOapg.properties.exchange: ...
+    
+    @typing.overload
     def get_item_oapg(self, name: typing_extensions.Literal["transactions"]) -> typing.Union[MetaOapg.properties.transactions, schemas.Unset]: ...
     
     @typing.overload
@@ -292,7 +235,7 @@ class Market(
     @typing.overload
     def get_item_oapg(self, name: str) -> typing.Union[schemas.UnsetAnyTypeSchema, schemas.Unset]: ...
     
-    def get_item_oapg(self, name: typing.Union[typing_extensions.Literal["symbol", "exports", "imports", "transactions", "tradeGoods", ], str]):
+    def get_item_oapg(self, name: typing.Union[typing_extensions.Literal["symbol", "exports", "imports", "exchange", "transactions", "tradeGoods", ], str]):
         return super().get_item_oapg(name)
     
 
@@ -302,6 +245,7 @@ class Market(
         symbol: typing.Union[MetaOapg.properties.symbol, str, ],
         imports: typing.Union[MetaOapg.properties.imports, list, tuple, ],
         exports: typing.Union[MetaOapg.properties.exports, list, tuple, ],
+        exchange: typing.Union[MetaOapg.properties.exchange, list, tuple, ],
         transactions: typing.Union[MetaOapg.properties.transactions, list, tuple, schemas.Unset] = schemas.unset,
         tradeGoods: typing.Union[MetaOapg.properties.tradeGoods, list, tuple, schemas.Unset] = schemas.unset,
         _configuration: typing.Optional[schemas.Configuration] = None,
@@ -313,6 +257,7 @@ class Market(
             symbol=symbol,
             imports=imports,
             exports=exports,
+            exchange=exchange,
             transactions=transactions,
             tradeGoods=tradeGoods,
             _configuration=_configuration,
@@ -321,3 +266,4 @@ class Market(
 
 from openapi_client.model.market_trade_good import MarketTradeGood
 from openapi_client.model.market_transaction import MarketTransaction
+from openapi_client.model.trade_good import TradeGood

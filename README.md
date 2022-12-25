@@ -204,7 +204,6 @@ Class | Method | HTTP request | Description
 *FleetApi* | [**create_ship_ship_scan**](docs/apis/tags/FleetApi.md#create_ship_ship_scan) | **post** /my/ships/{shipSymbol}/scan/ships | Scan Ships
 *FleetApi* | [**create_ship_system_scan**](docs/apis/tags/FleetApi.md#create_ship_system_scan) | **post** /my/ships/{shipSymbol}/scan/systems | Scan Systems
 *FleetApi* | [**create_survey**](docs/apis/tags/FleetApi.md#create_survey) | **post** /my/ships/{shipSymbol}/survey | Create Survey
-*FleetApi* | [**deploy_asset**](docs/apis/tags/FleetApi.md#deploy_asset) | **post** /my/ships/{shipSymbol}/deploy | Deploy Asset
 *FleetApi* | [**dock_ship**](docs/apis/tags/FleetApi.md#dock_ship) | **post** /my/ships/{shipSymbol}/dock | Dock Ship
 *FleetApi* | [**extract_resources**](docs/apis/tags/FleetApi.md#extract_resources) | **post** /my/ships/{shipSymbol}/extract | Extract Resources
 *FleetApi* | [**get_my_ship**](docs/apis/tags/FleetApi.md#get_my_ship) | **get** /my/ships/{shipSymbol} | Get Ship
@@ -218,8 +217,10 @@ Class | Method | HTTP request | Description
 *FleetApi* | [**purchase_ship**](docs/apis/tags/FleetApi.md#purchase_ship) | **post** /my/ships | Purchase Ship
 *FleetApi* | [**refuel_ship**](docs/apis/tags/FleetApi.md#refuel_ship) | **post** /my/ships/{shipSymbol}/refuel | Refuel Ship
 *FleetApi* | [**sell_cargo**](docs/apis/tags/FleetApi.md#sell_cargo) | **post** /my/ships/{shipSymbol}/sell | Sell Cargo
+*FleetApi* | [**ship_refine**](docs/apis/tags/FleetApi.md#ship_refine) | **post** /my/ships/{shipSymbol}/refine | Ship Refine
 *FleetApi* | [**transfer_cargo**](docs/apis/tags/FleetApi.md#transfer_cargo) | **post** /my/ships/{shipSymbol}/transfer | Transfer Cargo
 *FleetApi* | [**warp_ship**](docs/apis/tags/FleetApi.md#warp_ship) | **post** /my/ships/{shipSymbol}/warp | Warp Ship
+*SystemsApi* | [**get_jump_gate**](docs/apis/tags/SystemsApi.md#get_jump_gate) | **get** /systems/{systemSymbol}/waypoints/{waypointSymbol}/jump-gate | Get Jump Gate
 *SystemsApi* | [**get_market**](docs/apis/tags/SystemsApi.md#get_market) | **get** /systems/{systemSymbol}/waypoints/{waypointSymbol}/market | Get Market
 *SystemsApi* | [**get_shipyard**](docs/apis/tags/SystemsApi.md#get_shipyard) | **get** /systems/{systemSymbol}/waypoints/{waypointSymbol}/shipyard | Get Shipyard
 *SystemsApi* | [**get_system**](docs/apis/tags/SystemsApi.md#get_system) | **get** /systems/{systemSymbol} | Get System
@@ -231,6 +232,7 @@ Class | Method | HTTP request | Description
 
  - [Agent](docs/models/Agent.md)
  - [Chart](docs/models/Chart.md)
+ - [ConnectedSystem](docs/models/ConnectedSystem.md)
  - [Contract](docs/models/Contract.md)
  - [ContractDeliverGood](docs/models/ContractDeliverGood.md)
  - [ContractPayment](docs/models/ContractPayment.md)
@@ -240,6 +242,7 @@ Class | Method | HTTP request | Description
  - [ExtractionYield](docs/models/ExtractionYield.md)
  - [Faction](docs/models/Faction.md)
  - [FactionTrait](docs/models/FactionTrait.md)
+ - [JumpGate](docs/models/JumpGate.md)
  - [Market](docs/models/Market.md)
  - [MarketTradeGood](docs/models/MarketTradeGood.md)
  - [MarketTransaction](docs/models/MarketTransaction.md)
@@ -275,6 +278,8 @@ Class | Method | HTTP request | Description
  - [SystemFaction](docs/models/SystemFaction.md)
  - [SystemType](docs/models/SystemType.md)
  - [SystemWaypoint](docs/models/SystemWaypoint.md)
+ - [TradeGood](docs/models/TradeGood.md)
+ - [TradeSymbol](docs/models/TradeSymbol.md)
  - [Waypoint](docs/models/Waypoint.md)
  - [WaypointFaction](docs/models/WaypointFaction.md)
  - [WaypointOrbital](docs/models/WaypointOrbital.md)

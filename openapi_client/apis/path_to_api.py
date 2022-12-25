@@ -8,6 +8,7 @@ from openapi_client.apis.paths.systems_system_symbol_waypoints import SystemsSys
 from openapi_client.apis.paths.systems_system_symbol_waypoints_waypoint_symbol import SystemsSystemSymbolWaypointsWaypointSymbol
 from openapi_client.apis.paths.systems_system_symbol_waypoints_waypoint_symbol_market import SystemsSystemSymbolWaypointsWaypointSymbolMarket
 from openapi_client.apis.paths.systems_system_symbol_waypoints_waypoint_symbol_shipyard import SystemsSystemSymbolWaypointsWaypointSymbolShipyard
+from openapi_client.apis.paths.systems_system_symbol_waypoints_waypoint_symbol_jump_gate import SystemsSystemSymbolWaypointsWaypointSymbolJumpGate
 from openapi_client.apis.paths.factions import Factions
 from openapi_client.apis.paths.factions_faction_symbol import FactionsFactionSymbol
 from openapi_client.apis.paths.my_agent import MyAgent
@@ -16,12 +17,12 @@ from openapi_client.apis.paths.my_contracts_contract_id import MyContractsContra
 from openapi_client.apis.paths.my_contracts_contract_id_accept import MyContractsContractIdAccept
 from openapi_client.apis.paths.my_contracts_contract_id_deliver import MyContractsContractIdDeliver
 from openapi_client.apis.paths.my_contracts_contract_id_fulfill import MyContractsContractIdFulfill
-from openapi_client.apis.paths.my_ships_ship_symbol_orbit import MyShipsShipSymbolOrbit
 from openapi_client.apis.paths.my_ships import MyShips
 from openapi_client.apis.paths.my_ships_ship_symbol import MyShipsShipSymbol
+from openapi_client.apis.paths.my_ships_ship_symbol_orbit import MyShipsShipSymbolOrbit
+from openapi_client.apis.paths.my_ships_ship_symbol_refine import MyShipsShipSymbolRefine
 from openapi_client.apis.paths.my_ships_ship_symbol_chart import MyShipsShipSymbolChart
 from openapi_client.apis.paths.my_ships_ship_symbol_cooldown import MyShipsShipSymbolCooldown
-from openapi_client.apis.paths.my_ships_ship_symbol_deploy import MyShipsShipSymbolDeploy
 from openapi_client.apis.paths.my_ships_ship_symbol_dock import MyShipsShipSymbolDock
 from openapi_client.apis.paths.my_ships_ship_symbol_survey import MyShipsShipSymbolSurvey
 from openapi_client.apis.paths.my_ships_ship_symbol_extract import MyShipsShipSymbolExtract
@@ -46,6 +47,7 @@ PathToApi = typing_extensions.TypedDict(
         PathValues.SYSTEMS_SYSTEM_SYMBOL_WAYPOINTS_WAYPOINT_SYMBOL: SystemsSystemSymbolWaypointsWaypointSymbol,
         PathValues.SYSTEMS_SYSTEM_SYMBOL_WAYPOINTS_WAYPOINT_SYMBOL_MARKET: SystemsSystemSymbolWaypointsWaypointSymbolMarket,
         PathValues.SYSTEMS_SYSTEM_SYMBOL_WAYPOINTS_WAYPOINT_SYMBOL_SHIPYARD: SystemsSystemSymbolWaypointsWaypointSymbolShipyard,
+        PathValues.SYSTEMS_SYSTEM_SYMBOL_WAYPOINTS_WAYPOINT_SYMBOL_JUMPGATE: SystemsSystemSymbolWaypointsWaypointSymbolJumpGate,
         PathValues.FACTIONS: Factions,
         PathValues.FACTIONS_FACTION_SYMBOL: FactionsFactionSymbol,
         PathValues.MY_AGENT: MyAgent,
@@ -54,12 +56,12 @@ PathToApi = typing_extensions.TypedDict(
         PathValues.MY_CONTRACTS_CONTRACT_ID_ACCEPT: MyContractsContractIdAccept,
         PathValues.MY_CONTRACTS_CONTRACT_ID_DELIVER: MyContractsContractIdDeliver,
         PathValues.MY_CONTRACTS_CONTRACT_ID_FULFILL: MyContractsContractIdFulfill,
-        PathValues.MY_SHIPS_SHIP_SYMBOL_ORBIT: MyShipsShipSymbolOrbit,
         PathValues.MY_SHIPS: MyShips,
         PathValues.MY_SHIPS_SHIP_SYMBOL: MyShipsShipSymbol,
+        PathValues.MY_SHIPS_SHIP_SYMBOL_ORBIT: MyShipsShipSymbolOrbit,
+        PathValues.MY_SHIPS_SHIP_SYMBOL_REFINE: MyShipsShipSymbolRefine,
         PathValues.MY_SHIPS_SHIP_SYMBOL_CHART: MyShipsShipSymbolChart,
         PathValues.MY_SHIPS_SHIP_SYMBOL_COOLDOWN: MyShipsShipSymbolCooldown,
-        PathValues.MY_SHIPS_SHIP_SYMBOL_DEPLOY: MyShipsShipSymbolDeploy,
         PathValues.MY_SHIPS_SHIP_SYMBOL_DOCK: MyShipsShipSymbolDock,
         PathValues.MY_SHIPS_SHIP_SYMBOL_SURVEY: MyShipsShipSymbolSurvey,
         PathValues.MY_SHIPS_SHIP_SYMBOL_EXTRACT: MyShipsShipSymbolExtract,
@@ -85,6 +87,7 @@ path_to_api = PathToApi(
         PathValues.SYSTEMS_SYSTEM_SYMBOL_WAYPOINTS_WAYPOINT_SYMBOL: SystemsSystemSymbolWaypointsWaypointSymbol,
         PathValues.SYSTEMS_SYSTEM_SYMBOL_WAYPOINTS_WAYPOINT_SYMBOL_MARKET: SystemsSystemSymbolWaypointsWaypointSymbolMarket,
         PathValues.SYSTEMS_SYSTEM_SYMBOL_WAYPOINTS_WAYPOINT_SYMBOL_SHIPYARD: SystemsSystemSymbolWaypointsWaypointSymbolShipyard,
+        PathValues.SYSTEMS_SYSTEM_SYMBOL_WAYPOINTS_WAYPOINT_SYMBOL_JUMPGATE: SystemsSystemSymbolWaypointsWaypointSymbolJumpGate,
         PathValues.FACTIONS: Factions,
         PathValues.FACTIONS_FACTION_SYMBOL: FactionsFactionSymbol,
         PathValues.MY_AGENT: MyAgent,
@@ -93,12 +96,12 @@ path_to_api = PathToApi(
         PathValues.MY_CONTRACTS_CONTRACT_ID_ACCEPT: MyContractsContractIdAccept,
         PathValues.MY_CONTRACTS_CONTRACT_ID_DELIVER: MyContractsContractIdDeliver,
         PathValues.MY_CONTRACTS_CONTRACT_ID_FULFILL: MyContractsContractIdFulfill,
-        PathValues.MY_SHIPS_SHIP_SYMBOL_ORBIT: MyShipsShipSymbolOrbit,
         PathValues.MY_SHIPS: MyShips,
         PathValues.MY_SHIPS_SHIP_SYMBOL: MyShipsShipSymbol,
+        PathValues.MY_SHIPS_SHIP_SYMBOL_ORBIT: MyShipsShipSymbolOrbit,
+        PathValues.MY_SHIPS_SHIP_SYMBOL_REFINE: MyShipsShipSymbolRefine,
         PathValues.MY_SHIPS_SHIP_SYMBOL_CHART: MyShipsShipSymbolChart,
         PathValues.MY_SHIPS_SHIP_SYMBOL_COOLDOWN: MyShipsShipSymbolCooldown,
-        PathValues.MY_SHIPS_SHIP_SYMBOL_DEPLOY: MyShipsShipSymbolDeploy,
         PathValues.MY_SHIPS_SHIP_SYMBOL_DOCK: MyShipsShipSymbolDock,
         PathValues.MY_SHIPS_SHIP_SYMBOL_SURVEY: MyShipsShipSymbolSurvey,
         PathValues.MY_SHIPS_SHIP_SYMBOL_EXTRACT: MyShipsShipSymbolExtract,

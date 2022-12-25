@@ -110,6 +110,7 @@ class WaypointTrait(
                         "TEMPERATE": "TEMPERATE",
                         "JUNGLE": "JUNGLE",
                         "OCEAN": "OCEAN",
+                        "STRIPPED": "STRIPPED",
                     }
                 
                 @schemas.classproperty
@@ -343,6 +344,10 @@ class WaypointTrait(
                 @schemas.classproperty
                 def OCEAN(cls):
                     return cls("OCEAN")
+                
+                @schemas.classproperty
+                def STRIPPED(cls):
+                    return cls("STRIPPED")
             name = schemas.StrSchema
             description = schemas.StrSchema
             __annotations__ = {

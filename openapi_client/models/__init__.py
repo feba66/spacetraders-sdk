@@ -13,6 +13,7 @@
 
 from openapi_client.model.agent import Agent
 from openapi_client.model.chart import Chart
+from openapi_client.model.connected_system import ConnectedSystem
 from openapi_client.model.contract import Contract
 from openapi_client.model.contract_deliver_good import ContractDeliverGood
 from openapi_client.model.contract_payment import ContractPayment
@@ -22,6 +23,7 @@ from openapi_client.model.extraction import Extraction
 from openapi_client.model.extraction_yield import ExtractionYield
 from openapi_client.model.faction import Faction
 from openapi_client.model.faction_trait import FactionTrait
+from openapi_client.model.jump_gate import JumpGate
 from openapi_client.model.market import Market
 from openapi_client.model.market_trade_good import MarketTradeGood
 from openapi_client.model.market_transaction import MarketTransaction
@@ -57,6 +59,8 @@ from openapi_client.model.system import System
 from openapi_client.model.system_faction import SystemFaction
 from openapi_client.model.system_type import SystemType
 from openapi_client.model.system_waypoint import SystemWaypoint
+from openapi_client.model.trade_good import TradeGood
+from openapi_client.model.trade_symbol import TradeSymbol
 from openapi_client.model.waypoint import Waypoint
 from openapi_client.model.waypoint_faction import WaypointFaction
 from openapi_client.model.waypoint_orbital import WaypointOrbital

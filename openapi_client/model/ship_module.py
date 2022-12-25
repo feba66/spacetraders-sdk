@@ -32,7 +32,7 @@ class ShipModule(
 
     Do not edit the class manually.
 
-    A module can be installed in a ship and provides a set of capabilities such as storage space or quarters for crew.
+    A module can be installed in a ship and provides a set of capabilities such as storage space or quarters for crew. Module installations are permanent.
     """
 
 
@@ -60,6 +60,8 @@ class ShipModule(
                         "MODULE_ENVOY_QUARTERS_I": "ENVOY_QUARTERS_I",
                         "MODULE_PASSENGER_CABIN_I": "PASSENGER_CABIN_I",
                         "MODULE_MICRO_REFINERY_I": "MICRO_REFINERY_I",
+                        "MODULE_ORE_REFINERY_I": "ORE_REFINERY_I",
+                        "MODULE_FUEL_REFINERY_I": "FUEL_REFINERY_I",
                         "MODULE_SCIENCE_LAB_I": "SCIENCE_LAB_I",
                         "MODULE_JUMP_DRIVE_I": "JUMP_DRIVE_I",
                         "MODULE_JUMP_DRIVE_II": "JUMP_DRIVE_II",
@@ -94,6 +96,14 @@ class ShipModule(
                 @schemas.classproperty
                 def MICRO_REFINERY_I(cls):
                     return cls("MODULE_MICRO_REFINERY_I")
+                
+                @schemas.classproperty
+                def ORE_REFINERY_I(cls):
+                    return cls("MODULE_ORE_REFINERY_I")
+                
+                @schemas.classproperty
+                def FUEL_REFINERY_I(cls):
+                    return cls("MODULE_FUEL_REFINERY_I")
                 
                 @schemas.classproperty
                 def SCIENCE_LAB_I(cls):
