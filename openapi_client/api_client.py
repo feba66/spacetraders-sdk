@@ -916,7 +916,7 @@ class OpenApiResponse(JSONDetector):
         }
 
     def deserialize(self, response: urllib3.HTTPResponse, configuration: Configuration) -> ApiResponse:
-        content_type = response.getheader('content-type')
+        content_type = response.getheader('content-type').replace("; charset=utf-8","")
         deserialized_body = unset
         streamed = response.supports_chunked_reads()
 
