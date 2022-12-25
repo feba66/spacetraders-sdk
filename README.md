@@ -1,3 +1,16 @@
+# Important
+
+urllib3 cant handle the retry-after header from spacetraders
+[Issue](https://github.com/urllib3/urllib3/issues/2861)
+
+my fix: in urllib3/util/retry.py
+```py
+def parse_retry_after(self, retry_after):
+    # Whitespace: https://tools.ietf.org/html/rfc7230#section-3.2.4
+    if re.match(r"^\s*[0-9.]+\s*$", retry_after):
+        seconds = float(retry_after)
+```
+
 # openapi-client
 SpaceTraders is a multiplayer sci-fi strategy game where you acquire and manage a fleet of ships across a growing and dynamic universe.
 
