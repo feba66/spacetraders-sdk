@@ -1055,16 +1055,13 @@ class SpaceTraders:
             print("Exception when calling SystemApi->get_systems: %s\n" % e)
     # endregion
 
-
+    # region old
     def purchase_ship(self, waypointSymbol,shipType):
         try:
             api_response = self.api_fleet.purchase_ship(body={"waypointSymbol": waypointSymbol,"shipType":shipType})
-            # pprint(api_response)
             return api_response.body["data"]
         except openapi_client.ApiException as e:
             print("Exception when calling ContractsApi->get_contracts: %s\n" % e)
-    
-
 
     def accept_contract(self, contractId):
         try:
@@ -1076,16 +1073,12 @@ class SpaceTraders:
             print("Exception when calling ContractsApi->accept_contract: %s\n" % e)
     def deliver_contract(self, contractId, tradeSymbol, shipSymbol, units):
         try:
-            api_response = self.api_contracts.deliver_contract(path_params={"contractId": contractId}, body={
-                                                               "tradeSymbol": tradeSymbol, "shipSymbol": shipSymbol, "units": units})
+            api_response = self.api_contracts.deliver_contract(path_params={"contractId": contractId}, body={"tradeSymbol": tradeSymbol, "shipSymbol": shipSymbol, "units": units})
             pprint(api_response)
             return api_response
         except openapi_client.ApiException as e:
             print("Exception when calling ContractsApi->deliver_contract: %s\n" % e)
-
-
-    
-    
+    # endregion
 
 if __name__ == "__main__":
     st = SpaceTraders()
