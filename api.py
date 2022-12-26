@@ -10,25 +10,19 @@ from enum import Enum
 PATH_PREFIX = "spacetraders-sdk/"
 
 # region Enums
-
-class ErrorCodes(Enum):
-    WAYPOINT_ALREADY_CHARTED = 4230
-
-    
+class myEnum(Enum): 
     def __repr__(self) -> str:
         return self.__str__()
     def __str__(self) -> str:
         return self.name
-class ContractType(Enum):
+
+class ErrorCodes(myEnum):
+    WAYPOINT_ALREADY_CHARTED = 4230
+class ContractType(myEnum):
     PROCUREMENT="PROCUREMENT"
     TRANSPORT="TRANSPORT"
     SHUTTLE="SHUTTLE"
-
-    def __repr__(self) -> str:
-        return self.__str__()
-    def __str__(self) -> str:
-        return self.name
-class FactionTraitSymbol(Enum):
+class FactionTraitSymbol(myEnum):
     BUREAUCRATIC="BUREAUCRATIC"
     SECRETIVE="SECRETIVE"
     CAPITALISTIC="CAPITALISTIC"
@@ -95,31 +89,16 @@ class FactionTraitSymbol(Enum):
     COMMERCIAL="COMMERCIAL"
     FREE_MARKETS="FREE_MARKETS"
     ENTREPRENEURIAL="ENTREPRENEURIAL"
-
-    def __repr__(self) -> str:
-        return self.__str__()
-    def __str__(self) -> str:
-        return self.name
-class ShipNavFlightMode(Enum):
+class ShipNavFlightMode(myEnum):
     DRIFT="DRIFT"
     STEALTH="STEALTH"
     CRUISE="CRUISE"
     BURN="BURN"
-    
-    def __repr__(self) -> str:
-        return self.__str__()
-    def __str__(self) -> str:
-        return self.name
-class ShipNavStatus(Enum):
+class ShipNavStatus(myEnum):
     IN_TRANSIT="IN_TRANSIT"
     IN_ORBIT="IN_ORBIT"
     DOCKED="DOCKED"
-    
-    def __repr__(self) -> str:
-        return self.__str__()
-    def __str__(self) -> str:
-        return self.name
-class SystemType(Enum):
+class SystemType(myEnum):
     NEUTRON_STAR="NEUTRON_STAR"
     RED_STAR="RED_STAR"
     ORANGE_STAR="ORANGE_STAR"
@@ -130,12 +109,7 @@ class SystemType(Enum):
     HYPERGIANT="HYPERGIANT"
     NEBULA="NEBULA"
     UNSTABLE="UNSTABLE"
-    
-    def __repr__(self) -> str:
-        return self.__str__()
-    def __str__(self) -> str:
-        return self.name
-class WaypointType(Enum):
+class WaypointType(myEnum):
     PLANET="PLANET"
     GAS_GIANT="GAS_GIANT"
     MOON="MOON"
@@ -145,12 +119,7 @@ class WaypointType(Enum):
     NEBULA="NEBULA"
     DEBRIS_FIELD="DEBRIS_FIELD"
     GRAVITY_WELL="GRAVITY_WELL"
-    
-    def __repr__(self) -> str:
-        return self.__str__()
-    def __str__(self) -> str:
-        return self.name
-class WaypointTraitSymbols(Enum):
+class WaypointTraitSymbols(myEnum):
     UNCHARTED="UNCHARTED"
     MARKETPLACE="MARKETPLACE"
     SHIPYARD="SHIPYARD"
@@ -210,12 +179,7 @@ class WaypointTraitSymbols(Enum):
     JUNGLE="JUNGLE"
     OCEAN="OCEAN"
     STRIPPED="STRIPPED"
-    
-    def __repr__(self) -> str:
-        return self.__str__()
-    def __str__(self) -> str:
-        return self.name
-class ShipType(Enum):
+class ShipType(myEnum):
     SHIP_PROBE="SHIP_PROBE"
     SHIP_MINING_DRONE="SHIP_MINING_DRONE"
     SHIP_INTERCEPTOR="SHIP_INTERCEPTOR"
@@ -226,12 +190,7 @@ class ShipType(Enum):
     SHIP_LIGHT_SHUTTLE="SHIP_LIGHT_SHUTTLE"
     SHIP_ORE_HOUND="SHIP_ORE_HOUND"
     SHIP_REFINING_FREIGHTER="SHIP_REFINING_FREIGHTER"
-    
-    def __repr__(self) -> str:
-        return self.__str__()
-    def __str__(self) -> str:
-        return self.name
-class TradeSymbol(Enum):
+class TradeSymbol(myEnum):
     PRECIOUS_STONES="PRECIOUS_STONES"
     QUARTZ_SAND="QUARTZ_SAND"
     SILICON_CRYSTALS="SILICON_CRYSTALS"
@@ -339,30 +298,77 @@ class TradeSymbol(Enum):
     MOUNT_LASER_CANNON_I="MOUNT_LASER_CANNON_I"
     MOUNT_MISSILE_LAUNCHER_I="MOUNT_MISSILE_LAUNCHER_I"
     MOUNT_TURRET_I="MOUNT_TURRET_I"
-
-    def __repr__(self) -> str:
-        return self.__str__()
-    def __str__(self) -> str:
-        return self.name
-class MarketTransactionType(Enum):
+class MarketTransactionType(myEnum):
     PURCHASE="PURCHASE"
     SELL="SELL"
-
-    def __repr__(self) -> str:
-        return self.__str__()
-    def __str__(self) -> str:
-        return self.name
-class MarketTradeGoodSupply(Enum):
+class MarketTradeGoodSupply(myEnum):
     SCARCE="SCARCE"
     LIMITED="LIMITED"
     MODERATE="MODERATE"
     ABUNDANT="ABUNDANT"
-
-    def __repr__(self) -> str:
-        return self.__str__()
-    def __str__(self) -> str:
-        return self.name
-
+class ShipModuleType(myEnum):
+    MODULE_MINERAL_PROCESSOR_I="MODULE_MINERAL_PROCESSOR_I"
+    MODULE_CARGO_HOLD_I="MODULE_CARGO_HOLD_I"
+    MODULE_CREW_QUARTERS_I="MODULE_CREW_QUARTERS_I"
+    MODULE_ENVOY_QUARTERS_I="MODULE_ENVOY_QUARTERS_I"
+    MODULE_PASSENGER_CABIN_I="MODULE_PASSENGER_CABIN_I"
+    MODULE_MICRO_REFINERY_I="MODULE_MICRO_REFINERY_I"
+    MODULE_ORE_REFINERY_I="MODULE_ORE_REFINERY_I"
+    MODULE_FUEL_REFINERY_I="MODULE_FUEL_REFINERY_I"
+    MODULE_SCIENCE_LAB_I="MODULE_SCIENCE_LAB_I"
+    MODULE_JUMP_DRIVE_I="MODULE_JUMP_DRIVE_I"
+    MODULE_JUMP_DRIVE_II="MODULE_JUMP_DRIVE_II"
+    MODULE_JUMP_DRIVE_III="MODULE_JUMP_DRIVE_III"
+    MODULE_WARP_DRIVE_I="MODULE_WARP_DRIVE_I"
+    MODULE_WARP_DRIVE_II="MODULE_WARP_DRIVE_II"
+    MODULE_WARP_DRIVE_III="MODULE_WARP_DRIVE_III"
+    MODULE_SHIELD_GENERATOR_I="MODULE_SHIELD_GENERATOR_I"
+    MODULE_SHIELD_GENERATOR_II="MODULE_SHIELD_GENERATOR_II"
+class ShipFrameType(myEnum):
+    FRAME_PROBE="FRAME_PROBE"
+    FRAME_DRONE="FRAME_DRONE"
+    FRAME_INTERCEPTOR="FRAME_INTERCEPTOR"
+    FRAME_RACER="FRAME_RACER"
+    FRAME_FIGHTER="FRAME_FIGHTER"
+    FRAME_FRIGATE="FRAME_FRIGATE"
+    FRAME_SHUTTLE="FRAME_SHUTTLE"
+    FRAME_EXPLORER="FRAME_EXPLORER"
+    FRAME_LIGHT_FREIGHTER="FRAME_LIGHT_FREIGHTER"
+    FRAME_HEAVY_FREIGHTER="FRAME_HEAVY_FREIGHTER"
+    FRAME_TRANSPORT="FRAME_TRANSPORT"
+    FRAME_DESTROYER="FRAME_DESTROYER"
+    FRAME_CRUISER="FRAME_CRUISER"
+    FRAME_CARRIER="FRAME_CARRIER"
+class ShipMountType(myEnum):
+    MOUNT_GAS_SIPHON_I="MOUNT_GAS_SIPHON_I"
+    MOUNT_GAS_SIPHON_II="MOUNT_GAS_SIPHON_II"
+    MOUNT_GAS_SIPHON_III="MOUNT_GAS_SIPHON_III"
+    MOUNT_SURVEYOR_I="MOUNT_SURVEYOR_I"
+    MOUNT_SURVEYOR_II="MOUNT_SURVEYOR_II"
+    MOUNT_SURVEYOR_III="MOUNT_SURVEYOR_III"
+    MOUNT_SENSOR_ARRAY_I="MOUNT_SENSOR_ARRAY_I"
+    MOUNT_SENSOR_ARRAY_II="MOUNT_SENSOR_ARRAY_II"
+    MOUNT_SENSOR_ARRAY_III="MOUNT_SENSOR_ARRAY_III"
+    MOUNT_MINING_LASER_I="MOUNT_MINING_LASER_I"
+    MOUNT_MINING_LASER_II="MOUNT_MINING_LASER_II"
+    MOUNT_MINING_LASER_III="MOUNT_MINING_LASER_III"
+    MOUNT_LASER_CANNON_I="MOUNT_LASER_CANNON_I"
+    MOUNT_MISSILE_LAUNCHER_I="MOUNT_MISSILE_LAUNCHER_I"
+    MOUNT_TURRET_I="MOUNT_TURRET_I"
+class ShipCrewRotation(myEnum):
+    STRICT="STRICT"
+    RELAXED="RELAXED"
+class ShipEngineType(myEnum):
+    ENGINE_IMPULSE_DRIVE_I="ENGINE_IMPULSE_DRIVE_I"
+    ENGINE_ION_DRIVE_I="ENGINE_ION_DRIVE_I"
+    ENGINE_ION_DRIVE_II="ENGINE_ION_DRIVE_II"
+    ENGINE_HYPER_DRIVE_I="ENGINE_HYPER_DRIVE_I"
+class ShipReactorType(myEnum):
+    REACTOR_SOLAR_I="REACTOR_SOLAR_I"
+    REACTOR_FUSION_I="REACTOR_FUSION_I"
+    REACTOR_FISSION_I="REACTOR_FISSION_I"
+    REACTOR_CHEMICAL_I="REACTOR_CHEMICAL_I"
+    REACTOR_ANTIMATTER_I="REACTOR_ANTIMATTER_I"
 # endregion
 
 # region Classes
@@ -453,14 +459,14 @@ class ShipRequirements:
         self.slots=data["slots"].as_int_oapg if "slots" in data else None
 @dataclass
 class ShipEngine:
-    symbol: str
+    symbol: ShipEngineType
     requirements: ShipRequirements
     name:str
     description:str
     speed: int
     condition: int
     def __init__(self,data) -> None:
-        self.symbol=data["symbol"]
+        self.symbol=ShipEngineType[data["symbol"]]
         self.requirements=ShipRequirements(data["requirements"])
         self.name=data["name"]
         self.description=data["description"]
@@ -468,14 +474,14 @@ class ShipEngine:
         self.condition=data["condition"].as_int_oapg
 @dataclass
 class ShipReactor:
-    symbol:str
+    symbol:ShipReactorType
     requirements: ShipRequirements
     name:str
     description:str
     powerOutput:str
     condition:int
     def __init__(self,data) -> None:
-        self.symbol=data["symbol"]
+        self.symbol=ShipReactorType[data["symbol"]]
         self.requirements=ShipRequirements(data["requirements"])
         self.name=data["name"]
         self.description=data["description"]
@@ -510,14 +516,14 @@ class ShipCargoItem:
         self.units=data["units"].as_int_oapg
 @dataclass
 class ShipModule:
-    symbol:str
+    symbol:ShipModuleType
     requirements:ShipRequirements
     name:str
     capacity:Optional[int]
     range:Optional[int]
     description:Optional[str]
     def __init__(self,data) -> None:
-        self.symbol=data["symbol"]
+        self.symbol=ShipModuleType[data["symbol"]]
         self.requirements=ShipRequirements(data["requirements"])
         self.name=data["name"]
         self.capacity=data["capacity"].as_int_oapg if "capacity" in data else None
@@ -525,17 +531,17 @@ class ShipModule:
         self.description=data["description"] if "description" in data else None
 @dataclass
 class ShipMount:
-    symbol:str
+    symbol:ShipMountType
     requirements:ShipRequirements
     name:str
     description:Optional[str]
     strength:Optional[int]
     def __init__(self,data) -> None:
-        self.symbol=data["symbol"]
+        self.symbol=ShipMountType[data["symbol"]]
         self.requirements=ShipRequirements(data["requirements"])
         self.name=data["name"]
         self.description=data["description"] if "description" in data else None
-        self.strength=data["strength"] if "description" in data else None
+        self.strength=data["strength"].as_int_oapg if "description" in data else None
 @dataclass
 class ShipCargo:
     units: int
@@ -547,7 +553,7 @@ class ShipCargo:
         self.capacity=data["capacity"].as_int_oapg
 @dataclass
 class ShipFrame:
-    symbol:str
+    symbol:ShipFrameType
     moduleSlots:int
     requirements:ShipRequirements
     fuelCapacity:int
@@ -556,7 +562,7 @@ class ShipFrame:
     mountingPoints:int
     condition:Optional[int]
     def __init__(self,data) -> None:
-        self.symbol=data["symbol"]
+        self.symbol=ShipFrameType[data["symbol"]]
         self.moduleSlots=data["moduleSlots"].as_int_oapg
         self.requirements=ShipRequirements(data["requirements"])
         self.fuelCapacity=data["fuelCapacity"].as_int_oapg
@@ -569,14 +575,14 @@ class ShipCrew:
     # The amount of credits per crew member paid per hour. Wages are paid when a ship docks at a civilized waypoint.
     wages:int
     current:int
-    rotation:str
+    rotation:ShipCrewRotation
     morale:int
     required:int
     capacity:int
     def __init__(self,data) -> None:
         self.wages=data["wages"].as_int_oapg
         self.current=data["current"].as_int_oapg
-        self.rotation=data["rotation"]
+        self.rotation=ShipCrewRotation[data["rotation"]]
         self.morale=data["morale"].as_int_oapg
         self.required=data["required"].as_int_oapg
         self.capacity=data["capacity"].as_int_oapg
@@ -595,13 +601,13 @@ class ShipNavRouteWaypoint:
     systemSymbol:str
     x:int
     y:int
-    type:str
+    type:WaypointType
     def __init__(self,data) -> None:
         self.symbol=data["symbol"]
         self.systemSymbol=data["systemSymbol"]
         self.x=data["x"].as_int_oapg
         self.y=data["y"].as_int_oapg
-        self.type=data["type"]
+        self.type=WaypointType[data["type"]]
 @dataclass
 class ShipNavRoute:
     arrival:str
@@ -627,6 +633,7 @@ class ShipNav:
         self.status=ShipNavStatus[data["status"]]
 @dataclass
 class Ship:
+    symbol:str
     nav: ShipNav
     engine: ShipEngine
     fuel: ShipFuel
@@ -639,6 +646,7 @@ class Ship:
     frame: ShipFrame
 
     def __init__(self,data) -> None:
+        self.symbol = data["symbol"]
         self.nav=ShipNav(data["nav"])
         self.engine=ShipEngine(data["engine"])
         self.fuel=ShipFuel(data["fuel"])
@@ -954,7 +962,49 @@ class SpaceTraders:
     # endregion
     
     # region FleetApi
-
+    def create_chart(self, shipSymbol):
+        try:
+            api_response = self.api_fleet.create_chart(path_params={"shipSymbol": shipSymbol})
+            waypoint = Waypoint(api_response.body["data"]["waypoint"])
+            chart = Chart(api_response.body["data"]["chart"])
+            return (waypoint,chart)
+        except openapi_client.ApiException as e:
+            print("Exception when calling FleetApi->create_chart: %s\n" % e)
+    
+    def dock_ship(self,shipSymbol):
+        try:
+            api_response = self.api_fleet.dock_ship(path_params={"shipSymbol": shipSymbol})
+            return ShipNav(api_response.body["data"]["nav"])
+        except openapi_client.ApiException as e:
+            print("Exception when calling FleetApi->dock_ship: %s\n" % e)
+    
+    def get_my_ship(self,shipSymbol):
+        try:
+            api_response = self.api_fleet.get_my_ship(path_params={"shipSymbol": shipSymbol})
+            return Ship(api_response.body["data"])
+        except openapi_client.ApiException as e:
+            print("Exception when calling FleetApi->get_my_ship: %s\n" % e)
+    def get_my_ships(self):
+        try:
+            api_response = self.api_fleet.get_my_ships()
+            pprint(api_response.body["meta"])
+            return [Ship(k) for k in api_response.body["data"]]
+        except openapi_client.ApiException as e:
+            print("Exception when calling FleetApi->get_my_ships: %s\n" % e)
+    
+    def navigate_ship(self,shipSymbol,waypointSymbol):
+        try:
+            api_response = self.api_fleet.navigate_ship(path_params={"shipSymbol": shipSymbol},body={"waypointSymbol":waypointSymbol})
+            return (ShipNav(api_response.body["data"]["nav"]),ShipFuel(api_response.body["data"]["fuel"]))
+        except openapi_client.ApiException as e:
+            print("Exception when calling FleetApi->navigate_ship: %s\n" % e)
+    def orbit_ship(self,shipSymbol):
+        try:
+            api_response = self.api_fleet.orbit_ship(path_params={"shipSymbol": shipSymbol})
+            return ShipNav(api_response.body["data"]["nav"])
+        except openapi_client.ApiException as e:
+            print("Exception when calling FleetApi->orbit_ship: %s\n" % e)
+    
     # endregion
     
     # region SystemsApi
@@ -1005,13 +1055,7 @@ class SpaceTraders:
             print("Exception when calling SystemApi->get_systems: %s\n" % e)
     # endregion
 
-    def chart(self, shipSymbol):
-        try:
-            api_response = self.api_fleet.create_chart(path_params={"shipSymbol": shipSymbol})
-            pprint(api_response)
-            return api_response
-        except openapi_client.ApiException as e:
-            print("Exception when calling ContractsApi->get_contracts: %s\n" % e)
+
     def purchase_ship(self, waypointSymbol,shipType):
         try:
             api_response = self.api_fleet.purchase_ship(body={"waypointSymbol": waypointSymbol,"shipType":shipType})
@@ -1019,19 +1063,7 @@ class SpaceTraders:
             return api_response.body["data"]
         except openapi_client.ApiException as e:
             print("Exception when calling ContractsApi->get_contracts: %s\n" % e)
-    def get_my_ships(self):
-        try:
-            api_response = self.api_fleet.get_my_ships()
-            print()
-            for k in api_response.body["data"]:
-                print(k)
-                for l in k:
-                    print(l)
-                print()
-            pprint(api_response)
-            return api_response
-        except openapi_client.ApiException as e:
-            print("Exception when calling ContractsApi->get_contracts: %s\n" % e)
+    
 
 
     def accept_contract(self, contractId):
@@ -1067,14 +1099,26 @@ if __name__ == "__main__":
     waypoint = "X1-UV97-21170Z"
     shipyardWaypoint = "X1-UV97-44217E"
     jumpWaypoint = "X1-UV97-23539X"
+    ship = "FEBATE5T-1"
+    asteroidField ="X1-UV97-24895D"
     # pprint(st.get_waypoint(system,waypoint))
     # pprint(st.get_system(system))
     # pprint(st.get_systems())
-    pprint(st.get_system_waypoints(system))
+    # pprint(st.get_system_waypoints(system))
     # pprint(st.get_shipyard(system,shipyardWaypoint))
     # pprint(st.get_market(system,shipyardWaypoint))
-    pprint(st.get_jump_gate(system,jumpWaypoint))
+    # pprint(st.get_jump_gate(system,jumpWaypoint))
     # pprint(st.get_contract("clc3oyf4l000ss60j6lzyx2mv"))
+
+    # pprint(st.get_my_ships())
+    # pprint(st.create_chart(ship))
+    pprint(st.get_my_ship(ship))
+
+    # pprint(st.orbit_ship(ship))
+    # pprint(st.navigate_ship(ship,asteroidField))
+
+    pprint(st.dock_ship(ship))
+
     exit()
     # contract = "clbw3quox000ss60ju7qe7a8b"
     # st.accept_contract(contract)
