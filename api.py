@@ -986,7 +986,6 @@ class SpaceTraders:
     # endregion
     
     # region FactionsApi
-     # NOTE: cant find the route maybe its not implemented yet
     def get_factions(self):
         try:
             api_response = self.api_factions.get_factions()
@@ -1293,7 +1292,7 @@ if __name__ == "__main__":
                 pprint(st.sell_cargo(shipsymbol,"ICE_WATER",sum([x.units if x.symbol == "ICE_WATER" else 0 for x in cargo.inventory])))
             if "IRON_ORE" in [x.symbol for x in cargo.inventory]:
                 pprint(st.deliver_contract(contractId,"IRON_ORE",shipsymbol,sum([x.units if x.symbol == "IRON_ORE" else 0 for x in cargo.inventory])))
-
+        
         if "AMMONIA_ICE" in [x.symbol for x in cargo.inventory]:
             st.orbit_ship(shipsymbol)
             r = st.navigate_ship(shipsymbol,ammoniaiceway)
@@ -1316,11 +1315,11 @@ if __name__ == "__main__":
     pprint(st.get_my_ships())
     # handleCargo(ship)
 
-    r = st.navigate_ship(ship,asteroidField)
-    pprint(r)
+    # r = st.navigate_ship(ship,asteroidField)
+    # pprint(r)
     
-    t = st.timestamp_to_duration(r[0].route.arrival)
-    time.sleep(t)
+    # t = st.timestamp_to_duration(r[0].route.arrival)
+    # time.sleep(t)
 
     # pprint(st.navigate_ship(ship,asteroidField))
     # pprint(st.jettison(ship,"QUARTZ_SAND",13))
@@ -1332,14 +1331,36 @@ if __name__ == "__main__":
     # pprint(st.)
     # pprint(st.transfer_cargo(ship,"ANTIMATTER",15,drone))
     # pprint(st.transfer_cargo(drone,"ICE_WATER",15,ship))
+
+    def dumbsell(shipsymbol):
+        cargo = st.ships[shipsymbol].cargo
+
+        inplace = [TradeSymbol.IRON_ORE,TradeSymbol.COPPER_ORE,TradeSymbol.ALUMINUM_ORE,TradeSymbol.SILVER_ORE,TradeSymbol.GOLD_ORE,TradeSymbol.PLATINUM_ORE]
+        for good in inplace:
+            if str(good) in [x.symbol for x in cargo.inventory]:
+                pprint(st.sell_cargo(shipsymbol,str(good),sum([x.units if x.symbol == str(good) else 0 for x in cargo.inventory]))[2])
+        
+        dump = "ICE_WATER","AMMONIA_ICE","QUARTZ_SAND","SILICON_CRYSTALS"
+        for good in dump:
+            if good in [x.symbol for x in cargo.inventory]:
+                pprint(st.jettison(shipsymbol,good,sum([x.units if x.symbol == good else 0 for x in cargo.inventory])))
+        
+    
+    st.dock_ship(ship)
+    st.dock_ship(drone)
     # while True:
+    #     dumbsell(ship)
+    #     dumbsell(drone)
     #     pprint(st.extract_resources(ship)[2])
     #     pprint(st.extract_resources(drone)[2])
-    #     dumpunused(ship)
-    #     dumpunused(drone)
-
+    # #     dumpunused(ship)
+    # #     dumpunused(drone)
+    #     pprint(st.agent.credits)
     #     time.sleep(60)
     # pprint(st.get_market(copperAlu))
+
+    pprint([x.symbol for x in st.get_factions()])
+
 
     # st.dock_ship(ship)
     # pprint(st.refuel_ship(ship))
