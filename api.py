@@ -231,6 +231,138 @@ class ShipType(Enum):
         return self.__str__()
     def __str__(self) -> str:
         return self.name
+class TradeSymbol(Enum):
+    PRECIOUS_STONES="PRECIOUS_STONES"
+    QUARTZ_SAND="QUARTZ_SAND"
+    SILICON_CRYSTALS="SILICON_CRYSTALS"
+    AMMONIA_ICE="AMMONIA_ICE"
+    LIQUID_HYDROGEN="LIQUID_HYDROGEN"
+    LIQUID_NITROGEN="LIQUID_NITROGEN"
+    ICE_WATER="ICE_WATER"
+    EXOTIC_MATTER="EXOTIC_MATTER"
+    ADVANCED_CIRCUITRY="ADVANCED_CIRCUITRY"
+    GRAVITON_EMITTERS="GRAVITON_EMITTERS"
+    IRON="IRON"
+    IRON_ORE="IRON_ORE"
+    COPPER="COPPER"
+    COPPER_ORE="COPPER_ORE"
+    ALUMINUM="ALUMINUM"
+    ALUMINUM_ORE="ALUMINUM_ORE"
+    SILVER="SILVER"
+    SILVER_ORE="SILVER_ORE"
+    GOLD="GOLD"
+    GOLD_ORE="GOLD_ORE"
+    PLATINUM="PLATINUM"
+    PLATINUM_ORE="PLATINUM_ORE"
+    DIAMONDS="DIAMONDS"
+    URANITE="URANITE"
+    URANITE_ORE="URANITE_ORE"
+    MERITIUM="MERITIUM"
+    MERITIUM_ORE="MERITIUM_ORE"
+    HYDROCARBON="HYDROCARBON"
+    ANTIMATTER="ANTIMATTER"
+    FERTILIZERS="FERTILIZERS"
+    FABRICS="FABRICS"
+    FOOD="FOOD"
+    JEWELRY="JEWELRY"
+    MACHINERY="MACHINERY"
+    FIREARMS="FIREARMS"
+    ASSAULT_RIFLES="ASSAULT_RIFLES"
+    MILITARY_EQUIPMENT="MILITARY_EQUIPMENT"
+    EXPLOSIVES="EXPLOSIVES"
+    LAB_INSTRUMENTS="LAB_INSTRUMENTS"
+    AMMUNITION="AMMUNITION"
+    ELECTRONICS="ELECTRONICS"
+    SHIP_PLATING="SHIP_PLATING"
+    EQUIPMENT="EQUIPMENT"
+    FUEL="FUEL"
+    MEDICINE="MEDICINE"
+    DRUGS="DRUGS"
+    CLOTHING="CLOTHING"
+    MICROPROCESSORS="MICROPROCESSORS"
+    PLASTICS="PLASTICS"
+    POLYNUCLEOTIDES="POLYNUCLEOTIDES"
+    BIOCOMPOSITES="BIOCOMPOSITES"
+    NANOBOTS="NANOBOTS"
+    AI_MAINFRAMES="AI_MAINFRAMES"
+    QUANTUM_DRIVES="QUANTUM_DRIVES"
+    ROBOTIC_DRONES="ROBOTIC_DRONES"
+    CYBER_IMPLANTS="CYBER_IMPLANTS"
+    GENE_THERAPEUTICS="GENE_THERAPEUTICS"
+    NEURAL_CHIPS="NEURAL_CHIPS"
+    MOOD_REGULATORS="MOOD_REGULATORS"
+    VIRAL_AGENTS="VIRAL_AGENTS"
+    MICRO_FUSION_GENERATORS="MICRO_FUSION_GENERATORS"
+    SUPERGRAINS="SUPERGRAINS"
+    LASER_RIFLES="LASER_RIFLES"
+    HOLOGRAPHICS="HOLOGRAPHICS"
+    SHIP_SALVAGE="SHIP_SALVAGE"
+    RELIC_TECH="RELIC_TECH"
+    NOVEL_LIFEFORMS="NOVEL_LIFEFORMS"
+    BOTANICAL_SPECIMENS="BOTANICAL_SPECIMENS"
+    CULTURAL_ARTIFACTS="CULTURAL_ARTIFACTS"
+    REACTOR_SOLAR_I="REACTOR_SOLAR_I"
+    REACTOR_FUSION_I="REACTOR_FUSION_I"
+    REACTOR_FISSION_I="REACTOR_FISSION_I"
+    REACTOR_CHEMICAL_I="REACTOR_CHEMICAL_I"
+    REACTOR_ANTIMATTER_I="REACTOR_ANTIMATTER_I"
+    ENGINE_IMPULSE_DRIVE_I="ENGINE_IMPULSE_DRIVE_I"
+    ENGINE_ION_DRIVE_I="ENGINE_ION_DRIVE_I"
+    ENGINE_ION_DRIVE_II="ENGINE_ION_DRIVE_II"
+    ENGINE_HYPER_DRIVE_I="ENGINE_HYPER_DRIVE_I"
+    MODULE_MINERAL_PROCESSOR_I="MODULE_MINERAL_PROCESSOR_I"
+    MODULE_CARGO_HOLD_I="MODULE_CARGO_HOLD_I"
+    MODULE_CREW_QUARTERS_I="MODULE_CREW_QUARTERS_I"
+    MODULE_ENVOY_QUARTERS_I="MODULE_ENVOY_QUARTERS_I"
+    MODULE_PASSENGER_CABIN_I="MODULE_PASSENGER_CABIN_I"
+    MODULE_MICRO_REFINERY_I="MODULE_MICRO_REFINERY_I"
+    MODULE_ORE_REFINERY_I="MODULE_ORE_REFINERY_I"
+    MODULE_FUEL_REFINERY_I="MODULE_FUEL_REFINERY_I"
+    MODULE_SCIENCE_LAB_I="MODULE_SCIENCE_LAB_I"
+    MODULE_JUMP_DRIVE_I="MODULE_JUMP_DRIVE_I"
+    MODULE_JUMP_DRIVE_II="MODULE_JUMP_DRIVE_II"
+    MODULE_JUMP_DRIVE_III="MODULE_JUMP_DRIVE_III"
+    MODULE_SHIELD_GENERATOR_I="MODULE_SHIELD_GENERATOR_I"
+    MODULE_SHIELD_GENERATOR_II="MODULE_SHIELD_GENERATOR_II"
+    MOUNT_GAS_SIPHON_I="MOUNT_GAS_SIPHON_I"
+    MOUNT_GAS_SIPHON_II="MOUNT_GAS_SIPHON_II"
+    MOUNT_GAS_SIPHON_III="MOUNT_GAS_SIPHON_III"
+    MOUNT_SURVEYOR_I="MOUNT_SURVEYOR_I"
+    MOUNT_SURVEYOR_II="MOUNT_SURVEYOR_II"
+    MOUNT_SURVEYOR_III="MOUNT_SURVEYOR_III"
+    MOUNT_SENSOR_ARRAY_I="MOUNT_SENSOR_ARRAY_I"
+    MOUNT_SENSOR_ARRAY_II="MOUNT_SENSOR_ARRAY_II"
+    MOUNT_SENSOR_ARRAY_III="MOUNT_SENSOR_ARRAY_III"
+    MOUNT_MINING_LASER_I="MOUNT_MINING_LASER_I"
+    MOUNT_MINING_LASER_II="MOUNT_MINING_LASER_II"
+    MOUNT_MINING_LASER_III="MOUNT_MINING_LASER_III"
+    MOUNT_LASER_CANNON_I="MOUNT_LASER_CANNON_I"
+    MOUNT_MISSILE_LAUNCHER_I="MOUNT_MISSILE_LAUNCHER_I"
+    MOUNT_TURRET_I="MOUNT_TURRET_I"
+
+    def __repr__(self) -> str:
+        return self.__str__()
+    def __str__(self) -> str:
+        return self.name
+class MarketTransactionType(Enum):
+    PURCHASE="PURCHASE"
+    SELL="SELL"
+
+    def __repr__(self) -> str:
+        return self.__str__()
+    def __str__(self) -> str:
+        return self.name
+class MarketTradeGoodSupply(Enum):
+    SCARCE="SCARCE"
+    LIMITED="LIMITED"
+    MODERATE="MODERATE"
+    ABUNDANT="ABUNDANT"
+
+    def __repr__(self) -> str:
+        return self.__str__()
+    def __str__(self) -> str:
+        return self.name
+
 # endregion
 
 # region Classes
@@ -641,14 +773,86 @@ class Shipyard:
         self.symbol=data["symbol"]
         self.transactions=[ShipyardTransaction(t) for t in data["transactions"]] if "transactions" in data else None
         self.ships=[ShipyardShip(s) for s in data["ships"]] if "ships" in data else None
-
+@dataclass
+class TradeGood:
+    symbol:TradeSymbol
+    name:str
+    description:str
+    def __init__(self,data) -> None:
+        self.symbol=TradeSymbol[data["symbol"]]
+        self.name=data["name"]
+        self.description=data["description"]
+@dataclass
+class MarketTransaction:
+    shipSymbol:str
+    units:int
+    type:MarketTransactionType
+    pricePerUnit:int
+    timestamp:str
+    tradeSymbol:str
+    totalPrice:int
+    def __init__(self,data) -> None:
+        self.shipSymbol=data["shipSymbol"]
+        self.units=data["units"].as_int_oapg
+        self.type=MarketTransactionType[data["type"]]
+        self.pricePerUnit=data["pricePerUnit"].as_int_oapg
+        self.timestamp=data["timestamp"]
+        self.tradeSymbol=data["tradeSymbol"]
+        self.totalPrice=data["totalPrice"].as_int_oapg
+@dataclass
+class MarketTradeGood:
+    tradeVolume:int
+    symbol:str
+    sellPrice:int
+    purchasePrice:int
+    supply:MarketTradeGoodSupply
+    def __init__(self,data) -> None:
+        self.tradeVolume=data["tradeVolume"].as_int_oapg
+        self.symbol=data["symbol"]
+        self.sellPrice=data["sellPrice"].as_int_oapg
+        self.purchasePrice=data["purchasePrice"].as_int_oapg
+        self.supply=MarketTradeGoodSupply[data["supply"]]
 @dataclass
 class Market:
     symbol:str
-    imports:list[str]
-    exports:list[str]
-    transactions:Optional[list]
-    tradeGoods:Optional[list]
+    imports:list[TradeGood]
+    exports:list[TradeGood]
+    exchange:list[TradeGood]
+    transactions:Optional[list[MarketTransaction]]
+    tradeGoods:Optional[list[MarketTradeGood]]
+    def __init__(self,data) -> None:
+        self.symbol=data["symbol"]
+        self.imports=[TradeGood(t) for t in data["imports"]]
+        self.exports=[TradeGood(t) for t in data["exports"]]
+        self.exchange=[TradeGood(t) for t in data["exchange"]]
+        self.transactions=[MarketTransaction(t) for t in data["transactions"]] if "transactions" in data else None
+        self.tradeGoods=[MarketTradeGood(t) for t in data["tradeGoods"]] if "tradeGoods" in data else None
+@dataclass
+class ConnectedSystem:
+    symbol:str
+    distance:int
+    sectorSymbol:str
+    x:int
+    y:int
+    type:SystemType
+    factionSymbol:Optional[str]
+    def __init__(self,data) -> None:
+        self.symbol=data["symbol"]
+        self.distance=data["distance"].as_int_oapg
+        self.sectorSymbol=data["sectorSymbol"]
+        self.x=data["x"].as_int_oapg
+        self.y=data["y"].as_int_oapg
+        self.type=SystemType[data["type"]]
+        self.factionSymbol=data["factionSymbol"] if "factionSymbol" in data else None
+@dataclass
+class JumpGate:
+    connectedSystems:list[ConnectedSystem]
+    jumpRange:int
+    factionSymbol:Optional[str]
+    def __init__(self,data) -> None:
+        self.connectedSystems=[ConnectedSystem(s) for s in data["connectedSystems"]]
+        self.jumpRange=data["jumpRange"].as_int_oapg
+        self.factionSymbol=data["factionSymbol"] if "factionSymbol" in data else None
 
 # endregion
 
@@ -760,12 +964,21 @@ class SpaceTraders:
             return Waypoint(api_response.body["data"])
         except openapi_client.ApiException as e:
             print("Exception when calling SystemsApi->get_waypoint: %s\n" % e)
-
-
+    def get_jump_gate(self,systemSymbol,waypointSymbol):
+        try:
+            api_response = self.api_systems.get_jump_gate(path_params={"systemSymbol": systemSymbol,"waypointSymbol":waypointSymbol})
+            return JumpGate(api_response.body["data"])
+        except openapi_client.ApiException as e:
+            print("Exception when calling SystemsApi->get_jump_gate: %s\n" % e)
+    def get_market(self,systemSymbol,waypointSymbol):
+        try:
+            api_response = self.api_systems.get_market(path_params={"systemSymbol": systemSymbol,"waypointSymbol":waypointSymbol})
+            return Market(api_response.body["data"])
+        except openapi_client.ApiException as e:
+            print("Exception when calling SystemsApi->get_market: %s\n" % e)
     def get_shipyard(self,systemSymbol,waypointSymbol):
         try:
             api_response = self.api_systems.get_shipyard(path_params={"systemSymbol": systemSymbol,"waypointSymbol":waypointSymbol})
-            # pprint(api_response)
             return Shipyard(api_response.body["data"])
         except openapi_client.ApiException as e:
             print("Exception when calling SystemsApi->get_shipyard: %s\n" % e)
@@ -841,15 +1054,6 @@ class SpaceTraders:
 
     
     
-    
-    def get_market(self,systemSymbol,waypointSymbol):
-        try:
-            api_response = self.api_systems.get_market(path_params={"systemSymbol": systemSymbol,"waypointSymbol":waypointSymbol}).body["data"]
-            # pprint(api_response)
-            return api_response
-        except openapi_client.ApiException as e:
-            print("Exception when calling SystemsApi->get_market: %s\n" % e)
-    
 
 if __name__ == "__main__":
     st = SpaceTraders()
@@ -862,11 +1066,14 @@ if __name__ == "__main__":
     system = "X1-UV97"
     waypoint = "X1-UV97-21170Z"
     shipyardWaypoint = "X1-UV97-44217E"
+    jumpWaypoint = "X1-UV97-23539X"
     # pprint(st.get_waypoint(system,waypoint))
     # pprint(st.get_system(system))
     # pprint(st.get_systems())
-    # pprint(st.get_system_waypoints(system))
-    pprint(st.get_shipyard(system,shipyardWaypoint))
+    pprint(st.get_system_waypoints(system))
+    # pprint(st.get_shipyard(system,shipyardWaypoint))
+    # pprint(st.get_market(system,shipyardWaypoint))
+    pprint(st.get_jump_gate(system,jumpWaypoint))
     # pprint(st.get_contract("clc3oyf4l000ss60j6lzyx2mv"))
     exit()
     # contract = "clbw3quox000ss60ju7qe7a8b"
