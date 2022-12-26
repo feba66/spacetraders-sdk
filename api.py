@@ -1,4 +1,5 @@
 
+from datetime import datetime
 import time
 from typing import Optional
 import openapi_client
@@ -1191,11 +1192,14 @@ class SpaceTraders:
         except openapi_client.ApiException as e:
             print("Exception when calling SystemApi->get_systems: %s\n" % e)
     # endregion
-    # region SystemsApi
-    
-    # endregion
 
     #region asdf
+    def timestamp_to_duration(self,timestamp):
+        return (datetime.strptime(timestamp,"%Y-%m-%dT%H:%M:%S.%fZ") - datetime.utcnow()).total_seconds()
+    #endregion
+
+    #region nop
+    def nop(): pass # VS Code wont let me close the last region that contains a def so this is a fix for that
     #endregion
 
 if __name__ == "__main__":
@@ -1203,7 +1207,6 @@ if __name__ == "__main__":
     prices = {"SHIP_PROBE":69972,"SHIP_MINING_DRONE":87220,"SHIP_ORE_HOUND":159220,"SHIP_REFINING_FREIGHTER":1696320}
     # st.register("test0003","COSMIC")
     # pprint(st.get_factions())
-
     # exit()
     # pprint(st.get_agent())
     system = "X1-UV97"
@@ -1283,7 +1286,8 @@ if __name__ == "__main__":
             st.orbit_ship(shipsymbol)
             r = st.navigate_ship(shipsymbol,icewaterway)
             pprint(r)
-            # time.sleep(r[0].)
+            t = st.timestamp_to_duration(r[0].route.arrival)
+            time.sleep(t)
             st.dock_ship(shipsymbol)
             if "ICE_WATER" in [x.symbol for x in cargo.inventory]:
                 pprint(st.sell_cargo(shipsymbol,"ICE_WATER",sum([x.units if x.symbol == "ICE_WATER" else 0 for x in cargo.inventory])))
@@ -1294,22 +1298,30 @@ if __name__ == "__main__":
             st.orbit_ship(shipsymbol)
             r = st.navigate_ship(shipsymbol,ammoniaiceway)
             pprint(r)
-            # time.sleep(r[0].)
+            t = st.timestamp_to_duration(r[0].route.arrival)
+            time.sleep(t)
             st.dock_ship(shipsymbol)
             pprint(st.sell_cargo(shipsymbol,"AMMONIA_ICE",sum([x.units if x.symbol == "AMMONIA_ICE" else 0 for x in cargo.inventory])))
     def dumpunused(shipsymbol):
         cargo = st.ships[shipsymbol].cargo
         if "QUARTZ_SAND" in [x.symbol for x in cargo.inventory]:
-            pprint(st.jettison(ship,"QUARTZ_SAND",sum([x.units if x.symbol == "QUARTZ_SAND" else 0 for x in cargo.inventory])))
+            pprint(st.jettison(shipsymbol,"QUARTZ_SAND",sum([x.units if x.symbol == "QUARTZ_SAND" else 0 for x in cargo.inventory])))
 
         if "SILICON_CRYSTALS" in [x.symbol for x in cargo.inventory]:
-            pprint(st.jettison(ship,"SILICON_CRYSTALS",sum([x.units if x.symbol == "SILICON_CRYSTALS" else 0 for x in cargo.inventory])))
+            pprint(st.jettison(shipsymbol,"SILICON_CRYSTALS",sum([x.units if x.symbol == "SILICON_CRYSTALS" else 0 for x in cargo.inventory])))
         
     # pprint(st.get_my_ship(drone).cargo)
     # pprint(st.get_my_ship(ship).cargo)
     # handleCargo(ship,st.get_my_ship(ship).cargo)
     pprint(st.get_my_ships())
     # handleCargo(ship)
+
+    r = st.navigate_ship(ship,asteroidField)
+    pprint(r)
+    
+    t = st.timestamp_to_duration(r[0].route.arrival)
+    time.sleep(t)
+
     # pprint(st.navigate_ship(ship,asteroidField))
     # pprint(st.jettison(ship,"QUARTZ_SAND",13))
     # pprint(st.get_market("X1-UV97-21170Z"))
@@ -1323,6 +1335,9 @@ if __name__ == "__main__":
     # while True:
     #     pprint(st.extract_resources(ship)[2])
     #     pprint(st.extract_resources(drone)[2])
+    #     dumpunused(ship)
+    #     dumpunused(drone)
+
     #     time.sleep(60)
     # pprint(st.get_market(copperAlu))
 
