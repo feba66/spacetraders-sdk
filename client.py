@@ -32,25 +32,26 @@ sg.theme("dark")
 # window = sg.Window(title="Main Window", layout=layout, margins=(10, 10))
 # window.read(0)
 # window.find_element("-crewBar-").update_bar(s.crew.current)
-register_layout = [[]]
-login_layout = [[]]
-layout = [[sg.Frame("Register", register_layout)], [sg.Frame("Login", login_layout)]]
-window = sg.Window(title="Main Window", layout=layout, margins=(10, 10))
+register_layout = [[sg.Text("Name"), sg.InputText(key="-name-",size=(30, 10))], 
+                   [sg.Text("Faction"), sg.DropDown( values=[x.symbol for x in st.get_factions()],key="-faction-", size=(27, 10))],
+                   [sg.Button("Register")]]
+login_layout = [[sg.Text("Token"), sg.InputText(size=(30, 10))],
+                [sg.Button("Login")]]
+layout = [[sg.Frame("Register", register_layout)],
+          [sg.Frame("Login", login_layout)]]
+window = sg.Window(title="Space Traders Client", layout=layout, margins=(10, 10))
 while True:
     # window.-crewBar-.update_bar(s.crew.current)
 
     event, values = window.read()
-    
+    print(event)
+    if event == "Register":
+        print(values["-name-"])
+        print(values["-faction-"])
     if event == sg.WIN_CLOSED:
         break
 
 window.close()
-
-
-
-
-
-
 
 
 """
@@ -65,8 +66,3 @@ db: table users
 columns: username, token
 
 """
-
-
-
-
-
