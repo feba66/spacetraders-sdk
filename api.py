@@ -18,6 +18,9 @@ class myEnum(Enum):
 
 class ErrorCodes(myEnum):
     WAYPOINT_ALREADY_CHARTED = 4230
+    SURVEY_MUST_BE_DONE_WHILE_ORBITING = 4223
+    INSUFFICIENT_FUNDS = 4216 #Failed to purchase ship. Agent has insufficient funds.
+    ALREADY_ACCEPTED_CONTRACT = 4501
 class ContractType(myEnum):
     PROCUREMENT="PROCUREMENT"
     TRANSPORT="TRANSPORT"
@@ -339,6 +342,7 @@ class ShipFrameType(myEnum):
     FRAME_DESTROYER="FRAME_DESTROYER"
     FRAME_CRUISER="FRAME_CRUISER"
     FRAME_CARRIER="FRAME_CARRIER"
+    FRAME_MINER="FRAME_MINER"
 class ShipMountType(myEnum):
     MOUNT_GAS_SIPHON_I="MOUNT_GAS_SIPHON_I"
     MOUNT_GAS_SIPHON_II="MOUNT_GAS_SIPHON_II"
@@ -369,6 +373,11 @@ class ShipReactorType(myEnum):
     REACTOR_FISSION_I="REACTOR_FISSION_I"
     REACTOR_CHEMICAL_I="REACTOR_CHEMICAL_I"
     REACTOR_ANTIMATTER_I="REACTOR_ANTIMATTER_I"
+class SurveySize(myEnum):
+    SMALL="SMALL"
+    MODERATE="MODERATE"
+    LARGE="LARGE"
+
 # endregion
 
 # region Classes
@@ -464,29 +473,29 @@ class ShipEngine:
     name:str
     description:str
     speed: int
-    condition: int
+    condition: Optional[int]
     def __init__(self,data) -> None:
         self.symbol=ShipEngineType[data["symbol"]]
         self.requirements=ShipRequirements(data["requirements"])
         self.name=data["name"]
         self.description=data["description"]
         self.speed=data["speed"].as_int_oapg
-        self.condition=data["condition"].as_int_oapg
+        self.condition=data["condition"].as_int_oapg if "condition" in data else None
 @dataclass
 class ShipReactor:
     symbol:ShipReactorType
     requirements: ShipRequirements
     name:str
     description:str
-    powerOutput:str
-    condition:int
+    powerOutput:int
+    condition:Optional[int]
     def __init__(self,data) -> None:
         self.symbol=ShipReactorType[data["symbol"]]
         self.requirements=ShipRequirements(data["requirements"])
         self.name=data["name"]
         self.description=data["description"]
-        self.powerOutput=data["powerOutput"]
-        self.condition=data["condition"].as_int_oapg
+        self.powerOutput=data["powerOutput"].as_int_oapg
+        self.condition=data["condition"].as_int_oapg if "condition" in data else None
 @dataclass
 class Consumed:
     amount: int
@@ -541,7 +550,7 @@ class ShipMount:
         self.requirements=ShipRequirements(data["requirements"])
         self.name=data["name"]
         self.description=data["description"] if "description" in data else None
-        self.strength=data["strength"].as_int_oapg if "description" in data else None
+        self.strength=data["strength"].as_int_oapg if "strength" in data else None
 @dataclass
 class ShipCargo:
     units: int
@@ -861,11 +870,54 @@ class JumpGate:
         self.connectedSystems=[ConnectedSystem(s) for s in data["connectedSystems"]]
         self.jumpRange=data["jumpRange"].as_int_oapg
         self.factionSymbol=data["factionSymbol"] if "factionSymbol" in data else None
-
+@dataclass
+class Cooldown:
+    remainingSeconds:int
+    totalSeconds:int
+    expiration:str
+    shipSymbol:str
+    def __init__(self,data) -> None:
+        self.remainingSeconds=data["remainingSeconds"].as_int_oapg
+        self.totalSeconds=data["totalSeconds"].as_int_oapg
+        self.expiration=data["expiration"]
+        self.shipSymbol=data["shipSymbol"]
+@dataclass
+class SurveyDeposit:
+    symbol:str
+    def __init__(self,data) -> None:
+        self.symbol=data["symbol"]
+@dataclass
+class Survey:
+    symbol:str
+    size:SurveySize
+    signature:str
+    expiration:str
+    deposits:list[SurveyDeposit]
+    def __init__(self,data) -> None:
+        self.symbol=data["symbol"]
+        self.size=SurveySize[data["size"]]
+        self.signature=data["signature"]
+        self.expiration=data["expiration"]
+        self.deposits=[SurveyDeposit(d) for d in data["deposits"]]
+    def dict(self):
+        return {"signature":self.signature,"symbol":self.symbol,"deposits":[{"symbol":x.symbol} for x in self.deposits],"expiration":self.expiration,"size":self.size.name}
+@dataclass
+class ExtractionYield:
+    symbol:str
+    units:int
+    def __init__(self,data) -> None:
+        self.symbol=data["symbol"]
+        self.units=data["units"].as_int_oapg
+@dataclass
+class Extraction:
+    yield_:ExtractionYield
+    shipSymbol:str
+    def __init__(self,data) -> None:
+        self.yield_=ExtractionYield(data["yield"])
+        self.shipSymbol=data["shipSymbol"]
 # endregion
 
 class SpaceTraders:
-
     api_client: openapi_client.ApiClient
 
     api_agents = agents_api.AgentsApi
@@ -876,10 +928,10 @@ class SpaceTraders:
     api_systems: systems_api.SystemsApi
 
     systems: list[System]
-    agent:Agent
+    agent: Agent
+    ships: dict[str,Ship]
 
     def __init__(self) -> None:
-
         configuration = openapi_client.Configuration()
         try:
             with open(PATH_PREFIX+"acc.txt", "r") as f:
@@ -894,6 +946,8 @@ class SpaceTraders:
         self.api_factions = factions_api.FactionsApi(self.api_client)
         self.api_fleet = fleet_api.FleetApi(self.api_client)
         self.api_systems = systems_api.SystemsApi(self.api_client)
+
+        self.ships={}
 
     # region DefaultApi
     def register(self,name,faction):
@@ -947,6 +1001,20 @@ class SpaceTraders:
     # endregion
     
     # region ContactsApi
+    def accept_contract(self, contractId):
+        try:
+            api_response = self.api_contracts.accept_contract(path_params={"contractId": contractId})
+            return (Agent(api_response.body["data"]["agent"]),Contract(api_response.body["data"]["contract"]))
+        except openapi_client.ApiException as e:
+            print("Exception when calling ContractsApi->accept_contract: %s\n" % e)
+    def deliver_contract(self, contractId, tradeSymbol, shipSymbol, units):
+        try:
+            api_response = self.api_contracts.deliver_contract(path_params={"contractId": contractId}, body={"tradeSymbol": tradeSymbol, "shipSymbol": shipSymbol, "units": units})
+
+            return (Contract(api_response.body["data"]["contract"]),ShipCargo(api_response.body["data"]["cargo"]))
+        except openapi_client.ApiException as e:
+            print("Exception when calling ContractsApi->deliver_contract: %s\n" % e)
+
     def get_contract(self,contractId):
         try:
             api_response = self.api_contracts.get_contract(path_params = {"contractId": contractId})
@@ -971,39 +1039,108 @@ class SpaceTraders:
         except openapi_client.ApiException as e:
             print("Exception when calling FleetApi->create_chart: %s\n" % e)
     
+    def create_survey(self,shipSymbol):
+        try:
+            api_response = self.api_fleet.create_survey(path_params={"shipSymbol": shipSymbol})
+            return (Cooldown(api_response.body["data"]["cooldown"]),[Survey(s) for s in api_response.body["data"]["surveys"]])
+        except openapi_client.ApiException as e:
+            print("Exception when calling FleetApi->create_survey: %s\n" % e)
     def dock_ship(self,shipSymbol):
         try:
             api_response = self.api_fleet.dock_ship(path_params={"shipSymbol": shipSymbol})
-            return ShipNav(api_response.body["data"]["nav"])
+            nav = ShipNav(api_response.body["data"]["nav"])
+            if shipSymbol in self.ships:
+                self.ships[shipSymbol].nav=nav
+            return nav
         except openapi_client.ApiException as e:
             print("Exception when calling FleetApi->dock_ship: %s\n" % e)
-    
+    def extract_resources(self,shipSymbol,survey=None):
+        try:
+            api_response = self.api_fleet.extract_resources(path_params={"shipSymbol": shipSymbol},body={"survey":survey.dict()} if survey!=None else {})
+            return (Cooldown(api_response.body["data"]["cooldown"]),ShipCargo(api_response.body["data"]["cargo"]),Extraction(api_response.body["data"]["extraction"]))
+        except openapi_client.ApiException as e:
+            print("Exception when calling FleetApi->extract_resources: %s\n" % e)
     def get_my_ship(self,shipSymbol):
         try:
             api_response = self.api_fleet.get_my_ship(path_params={"shipSymbol": shipSymbol})
-            return Ship(api_response.body["data"])
+            ship = Ship(api_response.body["data"])
+            self.ships[ship.symbol]=ship
+            return ship
         except openapi_client.ApiException as e:
             print("Exception when calling FleetApi->get_my_ship: %s\n" % e)
     def get_my_ships(self):
         try:
             api_response = self.api_fleet.get_my_ships()
             pprint(api_response.body["meta"])
-            return [Ship(k) for k in api_response.body["data"]]
+            ships = [Ship(k) for k in api_response.body["data"]]
+            for s in ships:
+                self.ships[s.symbol]=s
+            return ships 
         except openapi_client.ApiException as e:
             print("Exception when calling FleetApi->get_my_ships: %s\n" % e)
-    
+
+    def jettison(self,shipSymbol,good,units):
+        try:
+            api_response = self.api_fleet.jettison(path_params={"shipSymbol": shipSymbol},body={"symbol":good,"units":units})
+            cargo = ShipCargo(api_response.body["data"]["cargo"]) 
+            if shipSymbol in self.ships:
+                self.ships[shipSymbol].cargo=cargo
+            return cargo
+        except openapi_client.ApiException as e:
+            print("Exception when calling FleetApi->jettison: %s\n" % e)
+
     def navigate_ship(self,shipSymbol,waypointSymbol):
         try:
             api_response = self.api_fleet.navigate_ship(path_params={"shipSymbol": shipSymbol},body={"waypointSymbol":waypointSymbol})
-            return (ShipNav(api_response.body["data"]["nav"]),ShipFuel(api_response.body["data"]["fuel"]))
+            nav = ShipNav(api_response.body["data"]["nav"])
+            fuel = ShipFuel(api_response.body["data"]["fuel"])
+            if shipSymbol in self.ships:
+                self.ships[shipSymbol].nav = nav
+                self.ships[shipSymbol].fuel = fuel
+            return (nav,fuel)
         except openapi_client.ApiException as e:
             print("Exception when calling FleetApi->navigate_ship: %s\n" % e)
     def orbit_ship(self,shipSymbol):
         try:
             api_response = self.api_fleet.orbit_ship(path_params={"shipSymbol": shipSymbol})
-            return ShipNav(api_response.body["data"]["nav"])
+            nav = ShipNav(api_response.body["data"]["nav"])
+            if shipSymbol in self.ships:
+                self.ships[shipSymbol].nav=nav
+            return nav
         except openapi_client.ApiException as e:
             print("Exception when calling FleetApi->orbit_ship: %s\n" % e)
+    
+    def purchase_ship(self, waypointSymbol,shipType):
+        try:
+            api_response = self.api_fleet.purchase_ship(body={"waypointSymbol": waypointSymbol,"shipType":shipType})
+            return (Agent(api_response.body["data"]["agent"]),Ship(api_response.body["data"]["ship"]))
+        except openapi_client.ApiException as e:
+            print("Exception when calling FleetApi->purchase_ship: %s\n" % e)
+    def refuel_ship(self,shipSymbol):
+        try:
+            api_response = self.api_fleet.refuel_ship(path_params={"shipSymbol": shipSymbol})
+            return (Agent(api_response.body["data"]["agent"]),ShipFuel(api_response.body["data"]["fuel"]))
+        except openapi_client.ApiException as e:
+            print("Exception when calling FleetApi->refuel_ship: %s\n" % e)
+    def sell_cargo(self,shipSymbol,good,units):
+        try:
+            api_response = self.api_fleet.sell_cargo(path_params={"shipSymbol": shipSymbol},body={"symbol":good,"units":units})
+            self.agent = Agent(api_response.body["data"]["agent"])
+            cargo = ShipCargo(api_response.body["data"]["cargo"])
+            transaction = MarketTransaction(api_response.body["data"]["transaction"])
+            if shipSymbol in self.ships:
+                self.ships[shipSymbol].cargo=cargo
+            return (self.agent,cargo,transaction)
+
+        except openapi_client.ApiException as e:
+            print("Exception when calling FleetApi->sell_cargo: %s\n" % e)
+    def transfer_cargo(self,shipSymbol,good,units,receivingShipSymbol):
+        try:
+            api_response = self.api_fleet.transfer_cargo(path_params={"shipSymbol": shipSymbol},body={"tradeSymbol":good,"units":units,"shipSymbol":receivingShipSymbol})
+            return (ShipCargo(api_response.body["data"]["cargo"]))
+        except openapi_client.ApiException as e:
+            print("Exception when calling FleetApi->transfer_cargo: %s\n" % e)
+    
     
     # endregion
     
@@ -1020,9 +1157,9 @@ class SpaceTraders:
             return JumpGate(api_response.body["data"])
         except openapi_client.ApiException as e:
             print("Exception when calling SystemsApi->get_jump_gate: %s\n" % e)
-    def get_market(self,systemSymbol,waypointSymbol):
+    def get_market(self,waypointSymbol):
         try:
-            api_response = self.api_systems.get_market(path_params={"systemSymbol": systemSymbol,"waypointSymbol":waypointSymbol})
+            api_response = self.api_systems.get_market(path_params={"systemSymbol": waypointSymbol[0:waypointSymbol.find("-",4)],"waypointSymbol":waypointSymbol})
             return Market(api_response.body["data"])
         except openapi_client.ApiException as e:
             print("Exception when calling SystemsApi->get_market: %s\n" % e)
@@ -1054,35 +1191,16 @@ class SpaceTraders:
         except openapi_client.ApiException as e:
             print("Exception when calling SystemApi->get_systems: %s\n" % e)
     # endregion
-
-    # region old
-    def purchase_ship(self, waypointSymbol,shipType):
-        try:
-            api_response = self.api_fleet.purchase_ship(body={"waypointSymbol": waypointSymbol,"shipType":shipType})
-            return api_response.body["data"]
-        except openapi_client.ApiException as e:
-            print("Exception when calling ContractsApi->get_contracts: %s\n" % e)
-
-    def accept_contract(self, contractId):
-        try:
-            api_response = self.api_contracts.accept_contract(
-                path_params={"contractId": contractId})
-            pprint(api_response)
-            return api_response
-        except openapi_client.ApiException as e:
-            print("Exception when calling ContractsApi->accept_contract: %s\n" % e)
-    def deliver_contract(self, contractId, tradeSymbol, shipSymbol, units):
-        try:
-            api_response = self.api_contracts.deliver_contract(path_params={"contractId": contractId}, body={"tradeSymbol": tradeSymbol, "shipSymbol": shipSymbol, "units": units})
-            pprint(api_response)
-            return api_response
-        except openapi_client.ApiException as e:
-            print("Exception when calling ContractsApi->deliver_contract: %s\n" % e)
+    # region SystemsApi
+    
     # endregion
+
+    #region asdf
+    #endregion
 
 if __name__ == "__main__":
     st = SpaceTraders()
-
+    prices = {"SHIP_PROBE":69972,"SHIP_MINING_DRONE":87220,"SHIP_ORE_HOUND":159220,"SHIP_REFINING_FREIGHTER":1696320}
     # st.register("test0003","COSMIC")
     # pprint(st.get_factions())
 
@@ -1093,7 +1211,12 @@ if __name__ == "__main__":
     shipyardWaypoint = "X1-UV97-44217E"
     jumpWaypoint = "X1-UV97-23539X"
     ship = "FEBATE5T-1"
+    drone = "FEBATE5T-2"
     asteroidField ="X1-UV97-24895D"
+    contractId="clc3oyf4l000ss60j6lzyx2mv"
+    contractIce ="X1-UV97-21170Z"
+    copperAlu="X1-UV97-57201E"
+    silverGoldPlat="X1-UV97-82653Z"
     # pprint(st.get_waypoint(system,waypoint))
     # pprint(st.get_system(system))
     # pprint(st.get_systems())
@@ -1102,50 +1225,113 @@ if __name__ == "__main__":
     # pprint(st.get_market(system,shipyardWaypoint))
     # pprint(st.get_jump_gate(system,jumpWaypoint))
     # pprint(st.get_contract("clc3oyf4l000ss60j6lzyx2mv"))
+    # pprint(st.get_contracts())
 
     # pprint(st.get_my_ships())
     # pprint(st.create_chart(ship))
-    pprint(st.get_my_ship(ship))
+    # pprint(st.get_my_ship(ship))
 
     # pprint(st.orbit_ship(ship))
     # pprint(st.navigate_ship(ship,asteroidField))
 
-    pprint(st.dock_ship(ship))
+    # cooldown,surveys=st.create_survey(ship)
+    # pprint((cooldown,surveys))
+    # pprint(st.dock_ship(ship))
+    # time.sleep(cooldown.remainingSeconds)
+    # pprint(st.extract_resources(ship,surveys[0]))
+    # while True:
+    #     r = st.extract_resources(ship)
+    #     pprint(r)
+    #     time.sleep(r[0].totalSeconds)
 
-    exit()
-    # contract = "clbw3quox000ss60ju7qe7a8b"
-    # st.accept_contract(contract)
-    # st.get_my_ships()
-    # ship = "FEBAT3ST-1"
-    # st.chart(ship)
-    system = "X1-UV97"
-    shipyards = []
-    markets=[]
-    s = st.get_system(system)
-    for wa in s.waypoints:
-        w = st.get_waypoint(system,wa.symbol)
-        print(w.symbol)
-        for t in w.traits:
-            if t.symbol==WaypointTraitSymbols.SHIPYARD:
-                shipyards.append(w.symbol)
-            if t.symbol==WaypointTraitSymbols.MARKETPLACE:
-                markets.append(w.symbol)
-            print(" "+t.name)
-    print("== Shipyards ==")
-    for shipyard in shipyards:
-        print(shipyard)
-        sy = st.get_shipyard(system,shipyard).body["data"]
-        # print(sy)
-        for t in sy["shipTypes"]:
-            print(" "+t["type"])
-    print("== Markets ==")
-    for market in markets:
-        print(market)
-        m = st.get_market(system,market)
-        print(m)
-            # ns = st.purchase_ship(shipyard,t["type"])
-            # print(ns)
-    # st.get_systems()
-    # for s in st.systems:
-    #     print(s)
-    # st.get_my_ships()
+    # pprint(st.navigate_ship(ship,"X1-UV97-25702Z"))
+    # pprint(st.get_my_ships())
+    # pprint(st.sell_cargo(ship,"AMMONIA_ICE",16))
+    # pprint(st.get_market(system,"X1-UV97-25702Z"))
+    # waypoints = st.get_system_waypoints(system)
+    # pprint(waypoints)
+    # markets,shipyards=[],[]
+    # for w in waypoints:
+    #     print(w.symbol)
+    #     if WaypointTraitSymbols.MARKETPLACE in [x.symbol for x in w.traits]:
+    #         markets.append(w)
+    #         m = st.get_market(system,w.symbol)
+    #         pprint(([x.symbol for x in m.imports],[x.symbol for x in m.exports],[x.symbol for x in m.exchange]))
+    #     if WaypointTraitSymbols.SHIPYARD in [x.symbol for x in w.traits]:
+    #         shipyards.append(w)
+    #         pprint(st.get_shipyard(system,w.symbol))
+    # pprint(st.navigate_ship(ship,"X1-UV97-44217E"))
+    # pprint(st.purchase_ship(shipyardWaypoint,"SHIP_PROBE"))
+
+    # pprint(st.accept_contract(contractId))
+    # st.orbit_ship(ship)
+    # pprint(st.navigate_ship(ship,asteroidField))
+    def handleCargo(shipsymbol):
+        cargo = st.ships[shipsymbol].cargo
+        icewaterway   = "X1-UV97-21170Z"
+        ammoniaiceway = "X1-UV97-25702Z"
+        contractId="clc3oyf4l000ss60j6lzyx2mv"
+        inplace = [TradeSymbol.COPPER_ORE,TradeSymbol.ALUMINUM_ORE,TradeSymbol.SILVER_ORE,TradeSymbol.GOLD_ORE,TradeSymbol.PLATINUM_ORE]
+        pprint([x.symbol for x in cargo.inventory])
+        for good in inplace:
+            print(good)
+            if str(good) in [x.symbol for x in cargo.inventory]:
+                st.dock_ship(shipsymbol)
+                pprint(st.sell_cargo(shipsymbol,str(good),sum([x.units if x.symbol == str(good) else 0 for x in cargo.inventory]))[2])
+        
+        if "ICE_WATER" in [x.symbol for x in cargo.inventory] or "IRON_ORE" in [x.symbol for x in cargo.inventory]:
+            st.orbit_ship(shipsymbol)
+            r = st.navigate_ship(shipsymbol,icewaterway)
+            pprint(r)
+            # time.sleep(r[0].)
+            st.dock_ship(shipsymbol)
+            if "ICE_WATER" in [x.symbol for x in cargo.inventory]:
+                pprint(st.sell_cargo(shipsymbol,"ICE_WATER",sum([x.units if x.symbol == "ICE_WATER" else 0 for x in cargo.inventory])))
+            if "IRON_ORE" in [x.symbol for x in cargo.inventory]:
+                pprint(st.deliver_contract(contractId,"IRON_ORE",shipsymbol,sum([x.units if x.symbol == "IRON_ORE" else 0 for x in cargo.inventory])))
+
+        if "AMMONIA_ICE" in [x.symbol for x in cargo.inventory]:
+            st.orbit_ship(shipsymbol)
+            r = st.navigate_ship(shipsymbol,ammoniaiceway)
+            pprint(r)
+            # time.sleep(r[0].)
+            st.dock_ship(shipsymbol)
+            pprint(st.sell_cargo(shipsymbol,"AMMONIA_ICE",sum([x.units if x.symbol == "AMMONIA_ICE" else 0 for x in cargo.inventory])))
+    def dumpunused(shipsymbol):
+        cargo = st.ships[shipsymbol].cargo
+        if "QUARTZ_SAND" in [x.symbol for x in cargo.inventory]:
+            pprint(st.jettison(ship,"QUARTZ_SAND",sum([x.units if x.symbol == "QUARTZ_SAND" else 0 for x in cargo.inventory])))
+
+        if "SILICON_CRYSTALS" in [x.symbol for x in cargo.inventory]:
+            pprint(st.jettison(ship,"SILICON_CRYSTALS",sum([x.units if x.symbol == "SILICON_CRYSTALS" else 0 for x in cargo.inventory])))
+        
+    # pprint(st.get_my_ship(drone).cargo)
+    # pprint(st.get_my_ship(ship).cargo)
+    # handleCargo(ship,st.get_my_ship(ship).cargo)
+    pprint(st.get_my_ships())
+    # handleCargo(ship)
+    # pprint(st.navigate_ship(ship,asteroidField))
+    # pprint(st.jettison(ship,"QUARTZ_SAND",13))
+    # pprint(st.get_market("X1-UV97-21170Z"))
+    # pprint(st.navigate_ship(ship,"X1-UV97-25702Z"))
+    # pprint(st.get_market("X1-UV97-25702Z"))
+    # st.dock_ship(ship)
+    # pprint(st.refuel_ship(ship))
+    # pprint(st.)
+    # pprint(st.transfer_cargo(ship,"ANTIMATTER",15,drone))
+    # pprint(st.transfer_cargo(drone,"ICE_WATER",15,ship))
+    # while True:
+    #     pprint(st.extract_resources(ship)[2])
+    #     pprint(st.extract_resources(drone)[2])
+    #     time.sleep(60)
+    # pprint(st.get_market(copperAlu))
+
+    # st.dock_ship(ship)
+    # pprint(st.refuel_ship(ship))
+    # pprint(st.get_agent())
+    # pprint(st.get_my_ship(drone))
+    # pprint(st.transfer_cargo(ship,"ICE_WATER",11,drone))
+    # pprint(st.transfer_cargo(ship,"QUARTZ_SAND",10,drone))
+    # st.dock_ship(ship)
+    # pprint(st.sell_cargo(ship,"COPPER_ORE",8))
+    # pprint(st.get_shipyard(system,"X1-UV97-44217E"))
