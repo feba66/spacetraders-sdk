@@ -53,7 +53,7 @@ class MarketTradeGood(
             
             
                 class MetaOapg:
-                    inclusive_minimum = 10
+                    inclusive_minimum = 1
             
             
             class supply(

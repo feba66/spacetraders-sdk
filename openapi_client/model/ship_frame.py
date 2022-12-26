@@ -66,6 +66,7 @@ class ShipFrame(
                         "FRAME_FRIGATE": "FRIGATE",
                         "FRAME_SHUTTLE": "SHUTTLE",
                         "FRAME_EXPLORER": "EXPLORER",
+                        "FRAME_MINER": "MINER",
                         "FRAME_LIGHT_FREIGHTER": "LIGHT_FREIGHTER",
                         "FRAME_HEAVY_FREIGHTER": "HEAVY_FREIGHTER",
                         "FRAME_TRANSPORT": "TRANSPORT",
