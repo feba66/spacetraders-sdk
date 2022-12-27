@@ -929,6 +929,7 @@ class SpaceTraders:
     api_systems: systems_api.SystemsApi
 
     systems: list[System]
+    contracts: list[Contract]
     agent: Agent
     ships: dict[str,Ship]
 
@@ -952,6 +953,7 @@ class SpaceTraders:
         self.api_systems = systems_api.SystemsApi(self.api_client)
 
         self.ships={}
+        self.contracts={}
 
     # region DefaultApi
     def register(self,name,faction):
@@ -1021,13 +1023,19 @@ class SpaceTraders:
     def get_contract(self,contractId):
         try:
             api_response = self.api_contracts.get_contract(path_params = {"contractId": contractId})
-            return Contract(api_response.body["data"])
+            c = Contract(api_response.body["data"])
+            self.contracts[c.id]=c
+            return c
         except openapi_client.ApiException as e:
             print("Exception when calling ContractsApi->get_contract: %s\n" % e)
     def get_contracts(self):
         try:
             api_response = self.api_contracts.get_contracts()
-            return [Contract(c) for c in api_response.body["data"]]
+            contracts = {}
+            for c in [Contract(c) for c in api_response.body["data"]]:
+                contracts[c.id]=c
+            self.contracts=contracts
+            return self.contracts
         except openapi_client.ApiException as e:
             print("Exception when calling ContractsApi->get_contracts: %s\n" % e)
     # endregion

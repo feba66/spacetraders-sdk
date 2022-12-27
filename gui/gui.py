@@ -1,6 +1,6 @@
 from pprint import pprint
 import PySimpleGUI as sg
-from main import Main, Account
+from main import Main
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from PySimpleGUI.PySimpleGUI import Canvas
 
@@ -11,7 +11,7 @@ class SpaceTradersGUI:
     window: sg.Window
     treedata:sg.TreeData
     canvases:dict[Canvas.TKCanvas,FigureCanvasTkAgg]
-    
+
     def __init__(self) -> None:
         sg.theme(SpaceTradersGUI.THEME)
         self.main = Main()
@@ -48,12 +48,37 @@ class SpaceTradersGUI:
                 ]]
 
     def get_agent_layout(self):
-        return [[sg.Text("symbol", k="-agentsymbol-")]]
+        return [[sg.Column(
+            [[sg.Frame("Agent",[[sg.Text("symbol", k="-agentsymbol-")]])],
+                [sg.Frame("Contracts",[[sg.Text("contract", k="-contractsymbol-")]])]
+               ],scrollable=True,expand_x=True,expand_y=True)
+
+        ]]
 
     def update_agent(self):
         agent = self.main.get_agent()
         string = f"Name: {agent.symbol}\nAccount ID: {agent.accountId}\nHeadquarter: {agent.headquarters}\nCredits: {agent.credits}"
         self.window["-agentsymbol-"].update(value=string)
+    def update_contract(self):
+        contracts = self.main.get_contracts()
+        string=""
+        first= True
+        for co in contracts:
+            c = contracts[co]
+            if not first:
+                string+="\n\n"
+            else:
+                first=False
+            string += f"Id: {c.id}\n  Accepted: {c.accepted}\n  Fulfilled: {c.fulfilled}\n  Faction: {c.factionSymbol}\n  Expiration: {c.expiration}\n  Type: {c.type}\n  Terms:\n    Deadline: {c.terms.deadline}\n    onAccepted: {c.terms.payment.onAccepted}\n    onFulfilled: {c.terms.payment.onFulfilled}\n    Deliver:"
+            
+            firstd= True
+            if not firstd:
+                string+="\n"
+            else:
+                firstd=False
+            for d in c.terms.deliver:
+                string+= f"\n      {d.tradeSymbol}:\n        Units: {d.unitsFulfilled}/{d.unitsRequired}\n        To: {d.destinationSymbol}"
+        self.window["-contractsymbol-"].update(value=string)
 
     def get_ship_layout(self):
         return [[sg.Tree(data=self.treedata, headings=['Current', 'Maximum', '3'], change_submits=True, auto_size_columns=True, header_border_width=4,
@@ -134,12 +159,14 @@ class SpaceTradersGUI:
                     self.window["-logintext-"].update(
                         value=f"Youre logged in as {self.main.get_recent().name}")
                     self.update_agent()
+                    self.update_contract()
             elif event == "-gametabgroup-":
                 e = self.window["-gametabgroup-"].get()
                 if e == "-shiptab-":
                     self.update_ships()
                 elif e == "-agenttab-":
                     self.update_agent()
+                    self.update_contract()
                 elif e == "-systemtab-":
                     self.draw_fig(self.window["-systemcanvas-"].TKCanvas,self.main.get_system_plot("X1-UV97"))
                 elif e == "-systemstab-":

@@ -105,6 +105,11 @@ class Main:
         self.st.get_my_ships()
         return self.st.ships
 
+    def get_contracts(self):
+        self.st.get_contracts()
+        return self.st.contracts
+
+
 if __name__ == "__main__":
     m = Main()
     pprint(m.accounts)
