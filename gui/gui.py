@@ -1,11 +1,13 @@
 import PySimpleGUI as sg
-from main import Main,Account
+from main import Main, Account
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
 class SpaceTradersGUI:
     THEME = "darkteal10"
     main: Main
-    window:sg.Window
+    window: sg.Window
+
     def __init__(self) -> None:
         sg.theme(SpaceTradersGUI.THEME)
         self.main = Main()
@@ -16,18 +18,30 @@ class SpaceTradersGUI:
         return [[sg.Text("Name"), sg.InputText(key="-name-", size=(30, 10))],
                 [sg.Text("Faction"), sg.DropDown(
                     values=["a", "b", "c"], key="-faction-", size=(27, 10))],
-                [sg.Button("Register",k="-register-"), sg.Button("To Login", k="-toLogin-")]]
+                [sg.Button("Register", k="-register-"), sg.Button("To Login", k="-toLogin-")]]
 
     @property
     def login_layout(self):
         recent = self.main.get_recent()
         default = recent.token if recent else ""
-        return [[sg.Text("Token"), sg.InputText(size=(30, 10),k="-token-",default_text=default)],
-                [sg.Button("Login",k="-login-"), sg.Button("To Register", k="-toRegister-")]]
+        return [[sg.Text("Token"), sg.InputText(size=(30, 10), k="-token-", default_text=default)],
+                [sg.Button("Login", k="-login-"), sg.Button("To Register", k="-toRegister-")]]
 
     @property
     def game_layout(self):
-        return [[sg.Text("Youre logged in now",k="-logintext-")]]
+        return [[sg.Text("Youre logged in now", k="-logintext-")],
+                [sg.Canvas(size=(300, 300),k="-canvas-")]]
+
+
+    
+
+    def draw_fig(self,canvas,fig):
+        figure_canvas_agg = FigureCanvasTkAgg(fig, canvas)
+        figure_canvas_agg.draw()
+        figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
+        return figure_canvas_agg
+
+
     @property
     def get_pins(self):
         return [sg.pin(sg.Column(self.register_layout, key="-l1-", visible=True)),
@@ -35,16 +49,19 @@ class SpaceTradersGUI:
                 sg.pin(sg.Column(self.game_layout, key="-l3-", visible=False))]
 
     def run(self):
-        self.window = sg.Window("Space Traders GUI",layout=[[self.get_pins]],margins=(10,10))
+        self.window = sg.Window("Space Traders GUI", layout=[[self.get_pins]], margins=(10, 10),finalize=True)
+        
+        
         while True:
             event, values = self.window.read()
             print(event)
             if event == "-login-":
-                print(values["-token-"])
+                # print(values["-token-"])
                 if self.main.login(values["-token-"]):
                     self.window["-l2-"].update(visible=False)
                     self.window["-l3-"].update(visible=True)
                     self.window["-logintext-"].update(value=f"Youre logged in as {self.main.get_recent().name}")
+                    self.draw_fig(self.window["-canvas-"].TKCanvas,self.main.get_system_plot("X1-UV97"))
             elif event == "-register-":
                 print(values["-name-"])
                 print(values["-faction-"])
@@ -58,7 +75,6 @@ class SpaceTradersGUI:
                 break
 
         self.window.close()
-        
 
 
 if __name__ == "__main__":

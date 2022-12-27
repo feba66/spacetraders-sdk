@@ -5,6 +5,7 @@ import time
 import PySimpleGUI as sg
 import os
 import sys
+import matplotlib.pyplot as plt
 
 # sorry
 current = os.path.dirname(os.path.realpath(__file__))
@@ -75,6 +76,25 @@ class Main:
         with open(Main.RECENT_ACC_PATH,"w") as f:
             for acc in self.accounts.values():
                 f.write(acc.toCSV())
+
+
+
+    def get_systems_plot(self):
+        systems = self.st.get_systems()
+        plt.figure(facecolor=((13/255,52/255,70/255)))
+        ax = plt.axes()
+        ax.set_facecolor((20/255,58/255,80/255))
+        plt.plot([s.x for s in systems],[s.y for s in systems],marker=".",markersize=1,linestyle = "None")
+        plt.subplots_adjust(.1,.1,.9,.9)
+        return plt.gcf()
+    def get_system_plot(self,system):
+        waypoints = self.st.get_system_waypoints(system)
+        plt.figure(facecolor=((13/255,52/255,70/255)))
+        ax = plt.axes()
+        ax.set_facecolor((20/255,58/255,80/255))
+        plt.plot([s.x for s in waypoints],[s.y for s in waypoints],marker=".",markersize=3,linestyle = "None")
+        plt.subplots_adjust(.1,.1,.9,.9)
+        return plt.gcf()
 
 
 if __name__ == "__main__":
