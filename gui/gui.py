@@ -1,16 +1,15 @@
 import PySimpleGUI as sg
-from main import Main
+from main import Main,Account
 
 
 class SpaceTradersGUI:
     THEME = "darkteal10"
-    RECENT_ACC_PATH = "recent_accs.csv"
     main: Main
     window:sg.Window
     def __init__(self) -> None:
         sg.theme(SpaceTradersGUI.THEME)
         self.main = Main()
-        self.main.load_recent(SpaceTradersGUI.RECENT_ACC_PATH)
+        self.main.load_recent()
 
     @property
     def register_layout(self):
@@ -21,16 +20,19 @@ class SpaceTradersGUI:
 
     @property
     def login_layout(self):
-        return [[sg.Text("Token"), sg.InputText(size=(30, 10),k="-token-")],
+        recent = self.main.get_recent()
+        default = recent.token if recent else ""
+        return [[sg.Text("Token"), sg.InputText(size=(30, 10),k="-token-",default_text=default)],
                 [sg.Button("Login",k="-login-"), sg.Button("To Register", k="-toRegister-")]]
 
     @property
     def game_layout(self):
-        return [[]]
+        return [[sg.Text("Youre logged in now",k="-logintext-")]]
     @property
     def get_pins(self):
         return [sg.pin(sg.Column(self.register_layout, key="-l1-", visible=True)),
-                sg.pin(sg.Column(self.login_layout, key="-l2-", visible=False))]
+                sg.pin(sg.Column(self.login_layout, key="-l2-", visible=False)),
+                sg.pin(sg.Column(self.game_layout, key="-l3-", visible=False))]
 
     def run(self):
         self.window = sg.Window("Space Traders GUI",layout=[[self.get_pins]],margins=(10,10))
@@ -39,18 +41,19 @@ class SpaceTradersGUI:
             print(event)
             if event == "-login-":
                 print(values["-token-"])
-                self.main.login(values["-token-"])
+                if self.main.login(values["-token-"]):
+                    self.window["-l2-"].update(visible=False)
+                    self.window["-l3-"].update(visible=True)
+                    self.window["-logintext-"].update(value=f"Youre logged in as {self.main.get_recent().name}")
             elif event == "-register-":
                 print(values["-name-"])
                 print(values["-faction-"])
             elif event == "-toLogin-":
                 self.window["-l1-"].update(visible=False)
                 self.window["-l2-"].update(visible=True)
-                self.window.refresh()
             elif event == "-toRegister-":
                 self.window["-l2-"].update(visible=False)
                 self.window["-l1-"].update(visible=True)
-                self.window.refresh()
             elif event == sg.WIN_CLOSED:
                 break
 
