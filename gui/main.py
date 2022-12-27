@@ -67,6 +67,7 @@ class Main:
         acc = self.accounts.get(name) or Account(name,token,datetime.now())
         self.set_active(acc)
         print(f"Logged into {name}")
+        # pprint(self.st.agent)
         return True
 
     def register(self, name, faction):
@@ -96,6 +97,13 @@ class Main:
         plt.subplots_adjust(.1,.1,.9,.9)
         return plt.gcf()
 
+    def get_agent(self):
+        self.st.get_agent()
+        return self.st.agent
+
+    def get_ships(self):
+        self.st.get_my_ships()
+        return self.st.ships
 
 if __name__ == "__main__":
     m = Main()
