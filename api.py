@@ -932,13 +932,16 @@ class SpaceTraders:
     agent: Agent
     ships: dict[str,Ship]
 
-    def __init__(self) -> None:
+    def __init__(self,token=None) -> None:
         configuration = openapi_client.Configuration()
-        try:
-            with open(PATH_PREFIX+"acc.txt", "r") as f:
-                configuration.access_token = f.readline().replace("\n", "")
-        except:
-            pass
+        if token == None:
+            try:
+                with open(PATH_PREFIX+"acc.txt", "r") as f:
+                    configuration.access_token = f.readline().replace("\n", "")
+            except:
+                pass
+        else:
+            configuration.access_token = token
         self.api_client = openapi_client.ApiClient(configuration)
 
         self.api_agents = agents_api.AgentsApi(self.api_client)

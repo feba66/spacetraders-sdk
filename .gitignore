@@ -8,6 +8,7 @@ __pycache__/
 
 # sensitive information
 acc.txt
+recent_accs.csv
 
 # Distribution / packaging
 .Python

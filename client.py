@@ -13,7 +13,7 @@ agent = st.get_agent()
 credits = agent.credits
 ships = st.get_my_ships()
 
-sg.theme("dark")
+sg.theme("darkteal10")
 
 # agent_info = [[sg.Text(agent.symbol)], [sg.Text("Credits: "+str(credits))]]
 # ship_infos = []
@@ -34,21 +34,27 @@ sg.theme("dark")
 # window.find_element("-crewBar-").update_bar(s.crew.current)
 register_layout = [[sg.Text("Name"), sg.InputText(key="-name-",size=(30, 10))], 
                    [sg.Text("Faction"), sg.DropDown( values=[x.symbol for x in st.get_factions()],key="-faction-", size=(27, 10))],
-                   [sg.Button("Register")]]
+                   [sg.Button("Register"),sg.Button("To Login",k="-toLogin-")]]
 login_layout = [[sg.Text("Token"), sg.InputText(size=(30, 10))],
-                [sg.Button("Login")]]
-layout = [[sg.Frame("Register", register_layout)],
-          [sg.Frame("Login", login_layout)]]
-window = sg.Window(title="Space Traders Client", layout=layout, margins=(10, 10))
-while True:
-    # window.-crewBar-.update_bar(s.crew.current)
+                [sg.Button("Login"),sg.Button("To Register",k="-toRegister-")]]
+# first_layout = [[sg.Frame("Register", register_layout)],
+#           [sg.Frame("Login", login_layout)]]
+# window = sg.Window(title="Space Traders Client", layout=[[sg.Column(register_layout,key="-l1-",visible=True)],[sg.Column(login_layout,key="-l2-",visible=False)]], margins=(10, 10))
+window = sg.Window(title="Space Traders Client", layout=[[sg.pin(sg.Column(register_layout,key="-l1-",visible=True)),sg.pin(sg.Column(login_layout,key="-l2-",visible=False))]], margins=(10, 10))
 
+while True:
     event, values = window.read()
     print(event)
     if event == "Register":
         print(values["-name-"])
         print(values["-faction-"])
-    if event == sg.WIN_CLOSED:
+    elif event == "-toLogin-":
+        window["-l1-"].update(visible=False)
+        window["-l2-"].update(visible=True)
+    elif event == "-toRegister-":
+        window["-l2-"].update(visible=False)
+        window["-l1-"].update(visible=True)
+    elif event == sg.WIN_CLOSED:
         break
 
 window.close()
