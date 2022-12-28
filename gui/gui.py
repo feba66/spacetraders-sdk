@@ -1,3 +1,4 @@
+from datetime import datetime
 from pprint import pprint
 import PySimpleGUI as sg
 from main import Main
@@ -12,12 +13,20 @@ class SpaceTradersGUI:
     treedata:sg.TreeData
     canvases:dict[Canvas.TKCanvas,FigureCanvasTkAgg]
 
+    # region bools
+    _shipdrop_populated=False
+    _shipnavdrop_populated=False
+    # endregion
+    # region bools
+    _shipdrop_populated_time=None
+    # endregion
     def __init__(self) -> None:
         sg.theme(SpaceTradersGUI.THEME)
         self.main = Main()
         self.main.load_recent()
         self.treedata=sg.TreeData()
         self.canvases = {}
+        self.last_surveydata=[]
 
     @property
     def register_layout(self):
@@ -35,16 +44,17 @@ class SpaceTradersGUI:
 
     @property
     def game_layout(self):
-        return [[sg.Text("Youre logged in now", k="-logintext-")],
+        return [[sg.Text("Youre logged in now", k="-logintext-"),sg.Push(),sg.Text("Credits: ", k="-creditstext-",size=(16,1))],
                 # ,
                 [sg.TabGroup([[sg.Tab("Agent", self.get_agent_layout(), k="-agenttab-"),
-                               sg.Tab("Ships", self.get_ship_layout(), k="-shiptab-"),
+                               sg.Tab("Ships", self.get_ships_layout(), k="-shipstab-"),
+                               sg.Tab("Ship", self.get_ship_layout(), k="-shiptab-"),
                                sg.Tab("System", [[sg.Canvas(expand_x=True,expand_y=True,k="-systemcanvas-")]], k="-systemtab-"),
                                sg.Tab("Systems", [[sg.Canvas(expand_x=True,expand_y=True,k="-systemscanvas-")]], k="-systemstab-"),
                                ]],
                              enable_events=True,
                              k="-gametabgroup-",
-                             size=(600,500)),
+                             size=(1000,600)),
                 ]]
 
     def get_agent_layout(self):
@@ -80,16 +90,15 @@ class SpaceTradersGUI:
                 string+= f"\n      {d.tradeSymbol}:\n        Units: {d.unitsFulfilled}/{d.unitsRequired}\n        To: {d.destinationSymbol}"
         self.window["-contractsymbol-"].update(value=string)
 
-    def get_ship_layout(self):
+    def get_ships_layout(self):
         return [[sg.Tree(data=self.treedata, headings=['Current', 'Maximum', '3'], change_submits=True, auto_size_columns=True, header_border_width=4,
              # header_relief=RELIEF_GROOVE,
              key='-tree-', show_expanded=True,expand_x=True,expand_y=True )]]
 
-    def update_ships(self):
+    def update_ships_tree(self):
         ships = self.main.get_ships()
-        self.treedata =sg.TreeData()
-        for sname in ships:
-            ship = ships[sname]
+        self.treedata = sg.TreeData()
+        for ship in ships.values():
             k = f"-{ship.symbol}-"
 
             status = ship.nav.status != ship.nav.status.DOCKED
@@ -118,10 +127,82 @@ class SpaceTradersGUI:
             self.treedata.insert(k,k+"modules-","Modules",[len(ship.modules),ship.frame.moduleSlots])
             for m in ship.modules:
                 self.treedata.insert(k+"modules-",k+f"modules-{m.symbol}-",m.name,[m.capacity if m.capacity else m.range if m.range else None])
-            
-        pprint(ships)
         self.window["-tree-"].update(values=self.treedata)
     
+    def get_ship_layout(self):
+        return [[sg.Drop([],k="-shipdrop-",s=(20,10),enable_events=True)],
+                [sg.Text("ship",k="-shiptxt-")],
+                [sg.Text("fuel",k="-shipfueltxt-")],
+                [sg.Text("shipstatus",k="-shipstatustxt-"),sg.ProgressBar(10000,k="-shipstatusbar-",size=(100,10),visible=False)],
+                [sg.Text("Cooldown: "),sg.ProgressBar(10000,k="-shipcooldownbar-",size=(100,10),visible=False)],
+                [sg.Button("Dock",k="-btndock-"),sg.Button("Orbit",k="-btnorbit-"),sg.Button("Navigate to:",k="-btnnavigate-"),sg.Drop([],k="-shipnavdrop-",s=(20,10))],
+                [sg.Button("Excavate",k="-btnexcavate-"),sg.Button("Survey",k="-btnsurvey-"),sg.Button("Refuel",k="-btnrefuel-")],
+                [sg.Table([],["Symbol","Units"],k="-shipcargotable-",expand_x=True),sg.Column([[sg.Button("Sell",k="-btnsell-")],[sg.Button("Jettison",k="-btnjettison-")]])],
+                [sg.Table([],["Symbol","Size","Deposits","sig"],k="-shipsurveytable-",expand_x=True)]
+               ]
+    last_table_cargo=[]
+    def update_ship(self):
+
+        if not self._shipdrop_populated or self._shipdrop_populated_time and (datetime.utcnow()-self._shipdrop_populated_time)>300:
+            ships = self.main.get_ships()
+            self.window["-shipdrop-"].update(values=list(ships.keys()))
+            self._shipdrop_populated=True
+
+        if not self._shipnavdrop_populated and self.main.selected_ship!="":
+            s = self.main.get_ships()[self.main.selected_ship]
+            waypoints = self.main.get_waypoints(s.nav.systemSymbol)
+            self.window["-shipnavdrop-"].update(values=[w.symbol for w in waypoints])
+            self._shipnavdrop_populated=True
+        
+        if self.main.selected_ship!="":
+            s = self.main.get_ships()[self.main.selected_ship]
+            self.window["-shiptxt-"].update(value=f"Name: {s.symbol}")
+            self.window["-shipfueltxt-"].update(value=f"Fuel: {s.fuel.current}/{s.fuel.capacity}\nCargo: {s.cargo.units}/{s.cargo.capacity}")
+            remaining=""
+            if s.nav.status == s.nav.status.IN_TRANSIT:
+                arrive = self.main.parse_time(s.nav.route.arrival)
+                start = self.main.parse_time(s.fuel.consumed.timestamp)
+                diff = self.main.get_time_diff(arrive,datetime.utcnow())
+                if diff <0:
+                    percentLeft = 0
+                total = self.main.get_time_diff(arrive,start)
+                remaining = f" Remaining: {max(round(diff,5),0)}"
+                percentLeft = diff/total
+                self.window["-shipstatusbar-"].update(current_count=int((1-percentLeft)*10000),visible=True)
+            else:
+                self.window["-shipstatusbar-"].update(visible=False)
+            self.window["-shipstatustxt-"].update(value=f"Status: {s.nav.status.name} At/To: {s.nav.waypointSymbol}{remaining}")
+
+            cargo = [(c.symbol,c.units) for c in s.cargo.inventory]
+            if cargo != self.last_table_cargo:
+                self.window["-shipcargotable-"].update(values=cargo)
+                self.last_table_cargo= cargo
+            cooldown=self.main.get_cooldown(self.main.selected_ship)
+            if cooldown:
+                end = self.main.parse_time(cooldown.expiration)
+                diff = self.main.get_time_diff(end,datetime.utcnow())
+                if diff <=0:
+                    percentLeft = 0
+                else:
+                    percentLeft = diff/cooldown.totalSeconds
+                self.window["-shipcooldownbar-"].update(current_count=int((1-percentLeft)*10000),visible=True)
+            else:
+                self.window["-shipcooldownbar-"].update(visible=False)
+
+            surveys = self.main.get_surveys()
+            surveydata = []
+            for s in surveys:
+                if self.main.parse_time(s.expiration)<datetime.utcnow():
+                    self.main.remove_survey(s.signature)
+                    continue
+                deposits = list(x.symbol for x in s.deposits)
+                surveydata.append((s.symbol,s.size,deposits,s.signature))
+            if self.last_surveydata != surveydata:
+                self.window["-shipsurveytable-"].update(values=surveydata)
+                self.last_surveydata = surveydata
+
+
+
     def draw_fig(self, canvas, fig):
         if canvas not in self.canvases:
             self.canvases[canvas]=FigureCanvasTkAgg(fig, canvas)
@@ -133,55 +214,106 @@ class SpaceTradersGUI:
 
     @property
     def get_pins(self):
-        return [sg.pin(sg.Column(self.register_layout, key="-l1-", visible=True)),
-                sg.pin(sg.Column(self.login_layout, key="-l2-", visible=False)),
+        return [sg.pin(sg.Column(self.register_layout, key="-l1-", visible=False)),
+                sg.pin(sg.Column(self.login_layout, key="-l2-", visible=True)),
                 sg.pin(sg.Column(self.game_layout, key="-l3-", visible=False))]
+
+    def update(self,manual=False):
+        if self.main._is_logged_in:
+            self.window["-logintext-"].update(value=f"Youre logged in as {self.main.get_recent().name}")
+            self.window["-creditstext-"].update(value=f"Credits: {self.main.get_agent().credits}")
+            e = self.window["-gametabgroup-"].get()
+            if e == "-shipstab-":
+                self.update_ships_tree()
+            elif e == "-shiptab-":
+                self.update_ship()
+            elif e == "-agenttab-":
+                self.update_agent()
+                self.update_contract()
+            elif e == "-systemtab-" and manual:
+                self.draw_fig(self.window["-systemcanvas-"].TKCanvas,self.main.get_system_plot("X1-UV97"))
+            elif e == "-systemstab-" and manual:
+                self.draw_fig(self.window["-systemscanvas-"].TKCanvas,self.main.get_systems_plot())
+
 
     def run(self):
         self.window = sg.Window("Space Traders GUI", layout=[[self.get_pins]], margins=(10, 10), finalize=True,resizable=False)
-        self.window.bind('<Configure>', "Resize_Event")
         while True:
-            event, values = self.window.read()
-            print(event)
-            if event == "Resize_Event":
-                # new_size = (int(self.window.size[0] * 0.9), int(self.window.size[1] * 0.9))
-                # old_size = self.window["-gametabgroup-"].get_size()
-                # self.window["-gametabgroup-"].set_size(old_size)
-                # old_size = self.window["-gametabgroup-"].get_size()
-                # self.window["-gametabgroup-"].set_size(old_size)
-                self.window.Refresh()
-                pass
+            event, values = self.window.read(timeout=50,timeout_key="-update-")
+
+            if event == "-update-":
+                self.update()
+
+            elif event == "-gametabgroup-":
+                self.update(True)
+                
+            elif event == "-shipdrop-":
+                self.main.select_ship(values["-shipdrop-"])
+                self.update(True)
+
+            elif event == "-btndock-":
+                self.main.dock_ship(self.main.selected_ship)
+                self.update(True)
+
+            elif event == "-btnorbit-":
+                self.main.orbit_ship(self.main.selected_ship)
+                self.update(True)
+
+            elif event == "-btnnavigate-":
+                self.main.navigate_ship(self.main.selected_ship,values["-shipnavdrop-"])
+                self.update(True)
+
+            elif event == "-btnsurvey-":
+                self.main.survey(self.main.selected_ship)
+                self.update(True)
+
+            elif event == "-btnexcavate-":
+                if len(values["-shipsurveytable-"])==1:
+                    for s in self.main.get_surveys():
+                        if s.signature==self.last_surveydata[values["-shipsurveytable-"][0]][3]:
+                            survey=s
+                            break
+                    self.main.excavate(self.main.selected_ship,survey)
+                else:
+                    self.main.excavate(self.main.selected_ship)
+                self.update(True)
+
+            elif event == "-btnrefuel-":
+                self.main.refuel(self.main.selected_ship)
+                self.update(True)
+
+            elif event == "-btnsell-" or event == "-btnjettison-":
+                for i in values["-shipcargotable-"]:
+                    c = self.last_table_cargo[i]
+                    if event == "-btnsell-":
+                        self.main.sell_good(self.main.selected_ship,c[0],c[1])
+                    elif event == "-btnjettison-":
+                        self.main.jettison_good(self.main.selected_ship,c[0],c[1])
+                self.update(True)
+
             elif event == "-login-":
-                # print(values["-token-"])
                 if self.main.login(values["-token-"].replace("\n","")):
                     self.window["-l2-"].update(visible=False)
                     self.window["-l3-"].update(visible=True)
-                    self.window["-logintext-"].update(
-                        value=f"Youre logged in as {self.main.get_recent().name}")
-                    self.update_agent()
-                    self.update_contract()
-            elif event == "-gametabgroup-":
-                e = self.window["-gametabgroup-"].get()
-                if e == "-shiptab-":
-                    self.update_ships()
-                elif e == "-agenttab-":
-                    self.update_agent()
-                    self.update_contract()
-                elif e == "-systemtab-":
-                    self.draw_fig(self.window["-systemcanvas-"].TKCanvas,self.main.get_system_plot("X1-UV97"))
-                elif e == "-systemstab-":
-                    self.draw_fig(self.window["-systemscanvas-"].TKCanvas,self.main.get_systems_plot())
+                    self.update(True)
+
             elif event == "-register-":
                 print(values["-name-"])
                 print(values["-faction-"])
+
             elif event == "-toLogin-":
                 self.window["-l1-"].update(visible=False)
                 self.window["-l2-"].update(visible=True)
+
             elif event == "-toRegister-":
                 self.window["-l2-"].update(visible=False)
                 self.window["-l1-"].update(visible=True)
+
             elif event == sg.WIN_CLOSED:
                 break
+
+            else:
+                print(event)
 
         self.window.close()
 

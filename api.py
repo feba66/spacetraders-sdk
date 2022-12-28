@@ -7,6 +7,7 @@ from pprint import pprint
 from openapi_client.apis.tags import agents_api, contracts_api, default_api, factions_api, fleet_api, systems_api
 from dataclasses import dataclass
 from enum import Enum
+import json
 
 PATH_PREFIX = "spacetraders-sdk/"
 
@@ -22,6 +23,7 @@ class ErrorCodes(myEnum):
     SURVEY_MUST_BE_DONE_WHILE_ORBITING = 4223
     INSUFFICIENT_FUNDS = 4216 #Failed to purchase ship. Agent has insufficient funds.
     ALREADY_ACCEPTED_CONTRACT = 4501
+    GOOD_NOT_AVAILABLE_AT_MARKET= 4602
 class ContractType(myEnum):
     PROCUREMENT="PROCUREMENT"
     TRANSPORT="TRANSPORT"
@@ -932,6 +934,8 @@ class SpaceTraders:
     contracts: list[Contract]
     agent: Agent
     ships: dict[str,Ship]
+    cooldowns: dict[str,Cooldown]
+    surveys:list[Survey]
 
     def __init__(self,token=None) -> None:
         configuration = openapi_client.Configuration()
@@ -954,7 +958,8 @@ class SpaceTraders:
 
         self.ships={}
         self.contracts={}
-
+        self.cooldowns={}
+        self.surveys=[]
     # region DefaultApi
     def register(self,name,faction):
         try:
@@ -982,6 +987,7 @@ class SpaceTraders:
     # region AgentsApi
     def get_agent(self):
         try:
+            print("Get Agent")
             api_response = self.api_agents.get_my_agent()
             agent = Agent(api_response.body["data"])
             self.agent = agent
@@ -1030,6 +1036,7 @@ class SpaceTraders:
             print("Exception when calling ContractsApi->get_contract: %s\n" % e)
     def get_contracts(self):
         try:
+            print("Get Contracts")
             api_response = self.api_contracts.get_contracts()
             contracts = {}
             for c in [Contract(c) for c in api_response.body["data"]]:
@@ -1053,11 +1060,15 @@ class SpaceTraders:
     def create_survey(self,shipSymbol):
         try:
             api_response = self.api_fleet.create_survey(path_params={"shipSymbol": shipSymbol})
-            return (Cooldown(api_response.body["data"]["cooldown"]),[Survey(s) for s in api_response.body["data"]["surveys"]])
+            c,s = (Cooldown(api_response.body["data"]["cooldown"]),[Survey(s) for s in api_response.body["data"]["surveys"]])
+            self.cooldowns[shipSymbol]=c
+            self.surveys.extend(s)
+            return (c,s)
         except openapi_client.ApiException as e:
             print("Exception when calling FleetApi->create_survey: %s\n" % e)
     def dock_ship(self,shipSymbol):
         try:
+            print(f"Dock {shipSymbol}")
             api_response = self.api_fleet.dock_ship(path_params={"shipSymbol": shipSymbol})
             nav = ShipNav(api_response.body["data"]["nav"])
             if shipSymbol in self.ships:
@@ -1067,12 +1078,18 @@ class SpaceTraders:
             print("Exception when calling FleetApi->dock_ship: %s\n" % e)
     def extract_resources(self,shipSymbol,survey=None):
         try:
+            print(f"Extracting with {shipSymbol}")
             api_response = self.api_fleet.extract_resources(path_params={"shipSymbol": shipSymbol},body={"survey":survey.dict()} if survey!=None else {})
-            return (Cooldown(api_response.body["data"]["cooldown"]),ShipCargo(api_response.body["data"]["cargo"]),Extraction(api_response.body["data"]["extraction"]))
+            co,ca,ex =(Cooldown(api_response.body["data"]["cooldown"]),ShipCargo(api_response.body["data"]["cargo"]),Extraction(api_response.body["data"]["extraction"]))
+            self.cooldowns[shipSymbol]=co
+            if shipSymbol in self.ships:
+                self.ships[shipSymbol].cargo=ca
+            return (co,ca,ex)
         except openapi_client.ApiException as e:
             print("Exception when calling FleetApi->extract_resources: %s\n" % e)
     def get_my_ship(self,shipSymbol):
         try:
+            print(f"Get Ship {shipSymbol}")
             api_response = self.api_fleet.get_my_ship(path_params={"shipSymbol": shipSymbol})
             ship = Ship(api_response.body["data"])
             self.ships[ship.symbol]=ship
@@ -1081,17 +1098,32 @@ class SpaceTraders:
             print("Exception when calling FleetApi->get_my_ship: %s\n" % e)
     def get_my_ships(self):
         try:
+            print("Get Ships")
             api_response = self.api_fleet.get_my_ships()
-            pprint(api_response.body["meta"])
+            # pprint(api_response.body["meta"])
             ships = [Ship(k) for k in api_response.body["data"]]
             for s in ships:
                 self.ships[s.symbol]=s
             return ships 
         except openapi_client.ApiException as e:
             print("Exception when calling FleetApi->get_my_ships: %s\n" % e)
+    def get_ship_cooldown(self,shipSymbol):
+        try:
+            print(f"Getting cooldown of {shipSymbol}")
+            api_response = self.api_fleet.get_ship_cooldown(path_params={"shipSymbol": shipSymbol})
+            cooldown = Cooldown(api_response.body["data"]) 
+            if shipSymbol in self.ships:
+                self.cooldowns[shipSymbol]=cooldown
+            return cooldown
+        except openapi_client.ApiException as e:
+            print("Exception when calling FleetApi->get_ship_cooldown: %s\n" % e)
+        except TypeError as e:
+            self.cooldowns[shipSymbol]=None
+            return None
 
     def jettison(self,shipSymbol,good,units):
         try:
+            print(f"Thrown away {units}x {good} from {shipSymbol}")
             api_response = self.api_fleet.jettison(path_params={"shipSymbol": shipSymbol},body={"symbol":good,"units":units})
             cargo = ShipCargo(api_response.body["data"]["cargo"]) 
             if shipSymbol in self.ships:
@@ -1102,7 +1134,9 @@ class SpaceTraders:
 
     def navigate_ship(self,shipSymbol,waypointSymbol):
         try:
+            print(f"Navigating {shipSymbol} to {waypointSymbol}")
             api_response = self.api_fleet.navigate_ship(path_params={"shipSymbol": shipSymbol},body={"waypointSymbol":waypointSymbol})
+            
             nav = ShipNav(api_response.body["data"]["nav"])
             fuel = ShipFuel(api_response.body["data"]["fuel"])
             if shipSymbol in self.ships:
@@ -1113,6 +1147,7 @@ class SpaceTraders:
             print("Exception when calling FleetApi->navigate_ship: %s\n" % e)
     def orbit_ship(self,shipSymbol):
         try:
+            print(f"Orbit {shipSymbol}")
             api_response = self.api_fleet.orbit_ship(path_params={"shipSymbol": shipSymbol})
             nav = ShipNav(api_response.body["data"]["nav"])
             if shipSymbol in self.ships:
@@ -1129,8 +1164,13 @@ class SpaceTraders:
             print("Exception when calling FleetApi->purchase_ship: %s\n" % e)
     def refuel_ship(self,shipSymbol):
         try:
+            print(f"Refueling {shipSymbol}")
             api_response = self.api_fleet.refuel_ship(path_params={"shipSymbol": shipSymbol})
-            return (Agent(api_response.body["data"]["agent"]),ShipFuel(api_response.body["data"]["fuel"]))
+            a,f = (Agent(api_response.body["data"]["agent"]),ShipFuel(api_response.body["data"]["fuel"]))
+            self.agent=a
+            if shipSymbol in self.ships:
+                self.ships[shipSymbol].fuel=f
+            return (a,f)
         except openapi_client.ApiException as e:
             print("Exception when calling FleetApi->refuel_ship: %s\n" % e)
     def sell_cargo(self,shipSymbol,good,units):
@@ -1141,9 +1181,17 @@ class SpaceTraders:
             transaction = MarketTransaction(api_response.body["data"]["transaction"])
             if shipSymbol in self.ships:
                 self.ships[shipSymbol].cargo=cargo
+                
+            print(f"Sold {units}x {good} from {shipSymbol}")
             return (self.agent,cargo,transaction)
 
         except openapi_client.ApiException as e:
+            j = json.loads(str(e.body).replace("b'","").replace("}}'","}}"))
+            code = j["error"]["code"]
+            try:
+                print(f"Failed to sell {units}x {good} from {shipSymbol}: {ErrorCodes(code)}")
+            except:
+                print(f"Failed to sell {units}x {good} from {shipSymbol}")
             print("Exception when calling FleetApi->sell_cargo: %s\n" % e)
     def transfer_cargo(self,shipSymbol,good,units,receivingShipSymbol):
         try:
@@ -1182,18 +1230,21 @@ class SpaceTraders:
             print("Exception when calling SystemsApi->get_shipyard: %s\n" % e)
     def get_system_waypoints(self,systemSymbol):
         try:
+            print(f"Get {systemSymbol} Waypoints")
             api_response = self.api_systems.get_system_waypoints(path_params={"systemSymbol": systemSymbol})
             return [Waypoint(w) for w in api_response.body["data"]]
         except openapi_client.ApiException as e:
             print("Exception when calling SystemsApi->get_system_waypoints: %s\n" % e)
     def get_system(self,systemSymbol):
         try:
+            print("Get System")
             api_response = self.api_systems.get_system(path_params={"systemSymbol": systemSymbol})
             return System(api_response.body["data"])
         except openapi_client.ApiException as e:
             print("Exception when calling SystemApi->get_system: %s\n" % e)
     def get_systems(self):
         try:
+            print("Get Systems")
             api_response = self.api_systems.get_systems()
             with open(PATH_PREFIX+"systems.json","w") as f:
                 f.write(str(api_response.response.data).replace("b'","").replace("'",""))
@@ -1206,6 +1257,13 @@ class SpaceTraders:
     #region asdf
     def timestamp_to_duration(self,timestamp):
         return (datetime.strptime(timestamp,"%Y-%m-%dT%H:%M:%S.%fZ") - datetime.utcnow()).total_seconds()
+
+    def remove_survey(self,id):
+        for s in self.surveys:
+            if s.signature == id:
+                self.surveys.remove(s)
+                break
+
     #endregion
 
     #region nop

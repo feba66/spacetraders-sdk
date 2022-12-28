@@ -11,6 +11,14 @@ def parse_retry_after(self, retry_after):
         seconds = float(retry_after)
 ```
 
+# TODO
+
+- Shipyards and buying ships
+- accept / fulfill contracts
+- deliver for contract
+- automation
+- handling all ships in the update
+
 # openapi-client
 SpaceTraders is a multiplayer sci-fi strategy game where you acquire and manage a fleet of ships across a growing and dynamic universe.
 
