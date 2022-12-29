@@ -121,15 +121,15 @@ class Main:
         plt.subplots_adjust(.1,.1,.9,.9)
         return plt.gcf()
 
-    # Agent
+    # region Agent
     def get_agent(self):
         now = datetime.utcnow()
         if not self._agent_update or (now-self._agent_update).total_seconds()>60:
             self.st.get_agent()
             self._agent_update=now
         return self.st.agent
-
-    # Fleet
+    # endregion
+    # region Fleet
     def get_ships(self):
         now = datetime.utcnow()
         if not self._ships_update or (now-self._ships_update).total_seconds()>60:
@@ -158,14 +158,18 @@ class Main:
         return self.st.cooldowns[ship] if ship in self.st.cooldowns else self.st.get_ship_cooldown(ship)
     def buy_ship(self,wayp:str,ship:str):
         return self.st.purchase_ship(wayp,ship)
+    # endregion
 
+    #region Contracts
     def get_contracts(self):
         now = datetime.utcnow()
         if not self._contracts_update or (now-self._contracts_update).total_seconds()>60:
             self.st.get_contracts()
             self._contracts_update=now
         return self.st.contracts
-    
+    def deliver(self,id,ship,good,units):
+        return self.st.deliver_contract(id,ship,good,units)
+    # endregion
     
     def get_waypoints(self,system):
         return self.st.get_system_waypoints(system)

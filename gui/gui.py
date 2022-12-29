@@ -137,10 +137,12 @@ class SpaceTradersGUI:
                 [sg.Text("fuel",k="-shipfueltxt-")],
                 [sg.Text("shipstatus",k="-shipstatustxt-"),sg.ProgressBar(10000,k="-shipstatusbar-",size=(100,10),visible=False)],
                 [sg.Text("Cooldown: "),sg.ProgressBar(10000,k="-shipcooldownbar-",size=(100,10),visible=False)],
-                [sg.Button("Dock",k="-btndock-"),sg.Button("Orbit",k="-btnorbit-"),sg.Button("Navigate to:",k="-btnnavigate-"),sg.Drop([],k="-shipnavdrop-",s=(20,10))],
-                [sg.Button("Excavate",k="-btnexcavate-"),sg.Button("Survey",k="-btnsurvey-"),sg.Button("Refuel",k="-btnrefuel-")],
-                [sg.Table([],["Symbol","Units"],k="-shipcargotable-",expand_x=True),sg.Column([[sg.Button("Sell",k="-btnsell-")],[sg.Button("Jettison",k="-btnjettison-")]])],
-                [sg.Table([],["Symbol","Size","Deposits","sig"],k="-shipsurveytable-",expand_x=True)]
+                [sg.Button("Dock",k="-btndock-"),sg.Button("Orbit",k="-btnorbit-"),sg.Button("Navigate to:",k="-btnnavigate-"),sg.Drop([],k="-shipnavdrop-",s=(20,10)),
+                 sg.Button("Excavate",k="-btnexcavate-"),sg.Button("Survey",k="-btnsurvey-"),sg.Button("Refuel",k="-btnrefuel-"),
+                 sg.Button("Sell",k="-btnsell-"),sg.Button("Jettison",k="-btnjettison-"),sg.Button("Deliver",k="-btndeliver-")],
+                [sg.Table([],["Symbol","Units"],k="-shipcargotable-",expand_x=True)],
+                [sg.Table([],["Symbol","Size","Deposits","sig"],k="-shipsurveytable-",expand_x=True,col_widths=[120,100,570,170])],
+                [sg.Button("Delete survey",k="-btndelsurvey-")]
                ]
     last_table_cargo=[]
     def update_ship(self):
@@ -327,6 +329,23 @@ class SpaceTradersGUI:
                     elif event == "-btnjettison-":
                         self.main.jettison_good(self.main.selected_ship,c[0],c[1])
                 self.update(True)
+                
+            elif event == "-btndeliver-" and len(values["-shipcargotable-"])==1:
+                co = self.main.get_contracts()
+                if len(co.keys())==1:
+                    k = list(co.keys())[0]
+                    c = self.last_table_cargo[values["-shipcargotable-"][0]]
+                    for d in co[k].terms.deliver:
+                        if c[0] == d.tradeSymbol:
+                            self.main.deliver(co[k].id,self.main.selected_ship,c[0],c[1])
+                else:
+                    raise NotImplementedError()
+            elif event == "-btndelsurvey-":
+                for s in [self.last_surveydata[x][3] for x in values["-shipsurveytable-"]]:
+                    if s in [x.signature for x in self.main.get_surveys()]:
+                        self.main.remove_survey(s)
+                        break
+            
 
             elif event == "-buyship-" and self.window["-shipyardship-"].get() in self.last_shipyardships:
                 self.main.buy_ship(self.window["-shipyarddrop-"].get(),self.window["-shipyardship-"].get())

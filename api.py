@@ -116,7 +116,7 @@ class SpaceTraders:
             return (a,c)
         except openapi_client.ApiException as e:
             print("Exception when calling ContractsApi->accept_contract: %s\n" % e)
-    def deliver_contract(self, contractId, tradeSymbol, shipSymbol, units):
+    def deliver_contract(self, contractId, shipSymbol, tradeSymbol, units):
         try:
             api_response = self.api_contracts.deliver_contract(path_params={"contractId": contractId}, body={"tradeSymbol": tradeSymbol, "shipSymbol": shipSymbol, "units": units})
             co, ca =(Contract(api_response.body["data"]["contract"]),ShipCargo(api_response.body["data"]["cargo"]))

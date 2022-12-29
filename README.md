@@ -15,7 +15,7 @@ def parse_retry_after(self, retry_after):
 
 - [x] Shipyards and buying ships
 - [ ] accept / fulfill contracts
-- [ ] deliver for contract
+- [x] deliver for contract
 - [ ] automation
 - [ ] handling all ships in the update
 - [ ] markets
