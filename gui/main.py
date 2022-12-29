@@ -54,13 +54,15 @@ class Main:
         self.selected_ship=""
 
     def load_recent(self):
-        with open(Main.RECENT_ACC_PATH, "r") as f:
-            lines = f.readlines()
-            for line in lines:
-                name, token, lastLogin = line.replace("\n","").split(";")
-                acc = Account(name, token, datetime.strptime(lastLogin,Main.FORMAT_STR))
-                self.accounts[acc.name]=acc
-            
+        try:
+            with open(Main.RECENT_ACC_PATH, "r") as f:
+                lines = f.readlines()
+                for line in lines:
+                    name, token, lastLogin = line.replace("\n","").split(";")
+                    acc = Account(name, token, datetime.strptime(lastLogin,Main.FORMAT_STR))
+                    self.accounts[acc.name]=acc
+        except:
+            pass
 
     def get_recent(self) -> Account | None:
         if len(self.accounts) == 0:
@@ -100,13 +102,7 @@ class Main:
     def select_ship(self,ship):
         self.selected_ship=ship
 
-    def get_systems(self):
-        
-        now = datetime.utcnow()
-        if not self._systems_update or (now-self._systems_update).total_seconds()>60:
-            self.st.get_systems()
-            self._systems_update=now
-        return self.st.systems
+    
 
     def get_systems_plot(self):
         systems = self.get_systems()
@@ -125,6 +121,7 @@ class Main:
         plt.subplots_adjust(.1,.1,.9,.9)
         return plt.gcf()
 
+    # Agent
     def get_agent(self):
         now = datetime.utcnow()
         if not self._agent_update or (now-self._agent_update).total_seconds()>60:
@@ -132,26 +129,17 @@ class Main:
             self._agent_update=now
         return self.st.agent
 
+    # Fleet
     def get_ships(self):
         now = datetime.utcnow()
         if not self._ships_update or (now-self._ships_update).total_seconds()>60:
             self.st.get_my_ships()
             self._ships_update=now
         return self.st.ships
-
-    def get_contracts(self):
-        now = datetime.utcnow()
-        if not self._contracts_update or (now-self._contracts_update).total_seconds()>60:
-            self.st.get_contracts()
-            self._contracts_update=now
-        return self.st.contracts
-    
     def dock_ship(self,shipName):
         self.st.dock_ship(shipName)
     def orbit_ship(self,shipName):
         self.st.orbit_ship(shipName)
-    def get_waypoints(self,system):
-        return self.st.get_system_waypoints(system)
     def navigate_ship(self,ship,waypoint):
         if self.st.ships[ship].nav.waypointSymbol==waypoint:
             return True
@@ -168,6 +156,31 @@ class Main:
         return self.st.create_survey(ship)
     def get_cooldown(self,ship):
         return self.st.cooldowns[ship] if ship in self.st.cooldowns else self.st.get_ship_cooldown(ship)
+    def buy_ship(self,wayp:str,ship:str):
+        return self.st.purchase_ship(wayp,ship)
+
+    def get_contracts(self):
+        now = datetime.utcnow()
+        if not self._contracts_update or (now-self._contracts_update).total_seconds()>60:
+            self.st.get_contracts()
+            self._contracts_update=now
+        return self.st.contracts
+    
+    
+    def get_waypoints(self,system):
+        return self.st.get_system_waypoints(system)
+    def get_waypoint(self,way):
+        return self.st.get_waypoint(way) if way not in self.st.waypoints else self.st.waypoints[way] #TODO update if old enough
+    def get_systems(self):
+        now = datetime.utcnow()
+        if not self._systems_update or (now-self._systems_update).total_seconds()>60:
+            self.st.get_systems()
+            self._systems_update=now
+        return self.st.systems
+    def get_shipyard(self,sym:str):
+        return self.st.get_shipyard(sym) if sym not in self.st.shipyards else self.st.shipyards[sym] #TODO update shipyard if old enough
+    def get_market(self,sym:str):
+        return self.st.get_market(sym)
 
     def get_surveys(self):
         return self.st.surveys

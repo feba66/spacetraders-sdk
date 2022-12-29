@@ -16,6 +16,7 @@ class SpaceTradersGUI:
     # region bools
     _shipdrop_populated=False
     _shipnavdrop_populated=False
+    _shipyarddrop_populated=False
     # endregion
     # region bools
     _shipdrop_populated_time=None
@@ -49,6 +50,7 @@ class SpaceTradersGUI:
                 [sg.TabGroup([[sg.Tab("Agent", self.get_agent_layout(), k="-agenttab-"),
                                sg.Tab("Ships", self.get_ships_layout(), k="-shipstab-"),
                                sg.Tab("Ship", self.get_ship_layout(), k="-shiptab-"),
+                               sg.Tab("Shipyards",self.get_shipyards_layout(),k="-shipyardtab-"),
                                sg.Tab("System", [[sg.Canvas(expand_x=True,expand_y=True,k="-systemcanvas-")]], k="-systemtab-"),
                                sg.Tab("Systems", [[sg.Canvas(expand_x=True,expand_y=True,k="-systemscanvas-")]], k="-systemstab-"),
                                ]],
@@ -61,7 +63,7 @@ class SpaceTradersGUI:
         return [[sg.Column(
             [[sg.Frame("Agent",[[sg.Text("symbol", k="-agentsymbol-")]])],
                 [sg.Frame("Contracts",[[sg.Text("contract", k="-contractsymbol-")]])]
-               ],scrollable=True,expand_x=True,expand_y=True)
+               ],scrollable=True,vertical_scroll_only=True,expand_x=True,expand_y=True)
 
         ]]
 
@@ -201,8 +203,41 @@ class SpaceTradersGUI:
                 self.window["-shipsurveytable-"].update(values=surveydata)
                 self.last_surveydata = surveydata
 
-
-
+    def get_shipyards_layout(self):
+        return [[sg.Column([
+            [sg.Drop([],k="-shipyarddrop-",size=(20,1))],
+            [sg.Text("",k="-shipyardtext-")],
+            [sg.Drop([],"Select Shipyard first",k="-shipyardship-",size=(20,1))],
+            [sg.Button("Buy",k="-buyship-")]
+        ],
+        scrollable=True,vertical_scroll_only=True,
+        expand_x=True,expand_y=True)]]
+    last_shipyards=[]
+    last_shipyardships=[]
+    def update_shipyards(self):
+        if not self._shipyarddrop_populated:
+            locs = {}
+            for x in self.main.get_ships().values():
+                locs[self.main.st.system_sym_f_wayp(x.nav.waypointSymbol)]=1
+            shipyards = []
+            for l in locs:
+                wp = self.main.get_waypoints(l)
+                for w in wp:
+                    if "SHIPYARD" in [x.symbol.name for x in w.traits]:
+                        shipyards.append(w.symbol)
+            if shipyards != self.last_shipyards:
+                self.window["-shipyarddrop-"].update(values=shipyards)
+                self.last_shipyards=shipyards
+            self._shipyarddrop_populated=True
+        g = self.window["-shipyarddrop-"].get()
+        if g in self.last_shipyards:
+            sy = self.main.get_shipyard(g)
+            if [x.name for x in sy.shipTypes] != self.last_shipyardships:
+                self.window["-shipyardship-"].update(values=[x.name for x in sy.shipTypes])
+                self.last_shipyardships=[x.name for x in sy.shipTypes]
+            s = self.window["-shipyardship-"].get()
+            if s in self.last_shipyardships:
+                self.window["-shipyardtext-"].update(value=s)
     def draw_fig(self, canvas, fig):
         if canvas not in self.canvases:
             self.canvases[canvas]=FigureCanvasTkAgg(fig, canvas)
@@ -227,6 +262,8 @@ class SpaceTradersGUI:
                 self.update_ships_tree()
             elif e == "-shiptab-":
                 self.update_ship()
+            elif e == "-shipyardtab-":
+                self.update_shipyards()
             elif e == "-agenttab-":
                 self.update_agent()
                 self.update_contract()
@@ -290,6 +327,9 @@ class SpaceTradersGUI:
                     elif event == "-btnjettison-":
                         self.main.jettison_good(self.main.selected_ship,c[0],c[1])
                 self.update(True)
+
+            elif event == "-buyship-" and self.window["-shipyardship-"].get() in self.last_shipyardships:
+                self.main.buy_ship(self.window["-shipyarddrop-"].get(),self.window["-shipyardship-"].get())
 
             elif event == "-login-":
                 if self.main.login(values["-token-"].replace("\n","")):
