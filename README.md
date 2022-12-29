@@ -13,7 +13,7 @@ def parse_retry_after(self, retry_after):
 
 # TODO
 
-- [ ] Shipyards and buying ships
+- [x] Shipyards and buying ships
 - [ ] accept / fulfill contracts
 - [ ] deliver for contract
 - [ ] automation
