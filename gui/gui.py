@@ -36,7 +36,7 @@ class SpaceTradersGUI:
     def register_layout(self):
         return [[sg.Text("Name"), sg.InputText(key="-name-", size=(30, 10))],
                 [sg.Text("Faction"), sg.DropDown(
-                    values=["a", "b", "c"], key="-faction-", size=(27, 10))],
+                    values=["COSMIC","VOID","GALACTIC","QUANTUM","DOMINION"], key="-faction-", size=(27, 10))],
                 [sg.Button("Register", k="-register-"), sg.Button("To Login", k="-toLogin-")]]
 
     @property
