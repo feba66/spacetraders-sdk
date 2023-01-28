@@ -92,7 +92,8 @@ class Main:
         return self._is_logged_in
 
     def register(self, name, faction):
-        raise NotImplementedError()
+
+        raise SpaceTraders(" ").register(name,faction)
 
     def save_accounts(self):
         with open(Main.RECENT_ACC_PATH,"w") as f:

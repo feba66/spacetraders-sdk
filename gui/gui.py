@@ -13,6 +13,8 @@ class SpaceTradersGUI:
     treedata:sg.TreeData
     canvases:dict[Canvas.TKCanvas,FigureCanvasTkAgg]
 
+    last_table_cargo=[]
+
     # region bools
     _shipdrop_populated=False
     _shipnavdrop_populated=False
@@ -21,6 +23,7 @@ class SpaceTradersGUI:
     # region bools
     _shipdrop_populated_time=None
     # endregion
+    
     def __init__(self) -> None:
         sg.theme(SpaceTradersGUI.THEME)
         self.main = Main()
@@ -144,9 +147,8 @@ class SpaceTradersGUI:
                 [sg.Table([],["Symbol","Size","Deposits","sig"],k="-shipsurveytable-",expand_x=True,col_widths=[120,100,570,170])],
                 [sg.Button("Delete survey",k="-btndelsurvey-")]
                ]
-    last_table_cargo=[]
-    def update_ship(self):
 
+    def update_ship(self):
         if not self._shipdrop_populated or self._shipdrop_populated_time and (datetime.utcnow()-self._shipdrop_populated_time)>300:
             ships = self.main.get_ships()
             self.window["-shipdrop-"].update(values=list(ships.keys()))
@@ -176,7 +178,6 @@ class SpaceTradersGUI:
             else:
                 self.window["-shipstatusbar-"].update(visible=False)
             self.window["-shipstatustxt-"].update(value=f"Status: {s.nav.status.name} At/To: {s.nav.waypointSymbol}{remaining}")
-
             cargo = [(c.symbol,c.units) for c in s.cargo.inventory]
             if cargo != self.last_table_cargo:
                 self.window["-shipcargotable-"].update(values=cargo)
@@ -192,7 +193,6 @@ class SpaceTradersGUI:
                 self.window["-shipcooldownbar-"].update(current_count=int((1-percentLeft)*10000),visible=True)
             else:
                 self.window["-shipcooldownbar-"].update(visible=False)
-
             surveys = self.main.get_surveys()
             surveydata = []
             for s in surveys:
@@ -216,6 +216,7 @@ class SpaceTradersGUI:
         expand_x=True,expand_y=True)]]
     last_shipyards=[]
     last_shipyardships=[]
+
     def update_shipyards(self):
         if not self._shipyarddrop_populated:
             locs = {}
@@ -240,6 +241,7 @@ class SpaceTradersGUI:
             s = self.window["-shipyardship-"].get()
             if s in self.last_shipyardships:
                 self.window["-shipyardtext-"].update(value=s)
+
     def draw_fig(self, canvas, fig):
         if canvas not in self.canvases:
             self.canvases[canvas]=FigureCanvasTkAgg(fig, canvas)
@@ -273,7 +275,6 @@ class SpaceTradersGUI:
                 self.draw_fig(self.window["-systemcanvas-"].TKCanvas,self.main.get_system_plot("X1-UV97"))
             elif e == "-systemstab-" and manual:
                 self.draw_fig(self.window["-systemscanvas-"].TKCanvas,self.main.get_systems_plot())
-
 
     def run(self):
         self.window = sg.Window("Space Traders GUI", layout=[[self.get_pins]], margins=(10, 10), finalize=True,resizable=False)
@@ -340,12 +341,12 @@ class SpaceTradersGUI:
                             self.main.deliver(co[k].id,self.main.selected_ship,c[0],c[1])
                 else:
                     raise NotImplementedError()
+
             elif event == "-btndelsurvey-":
                 for s in [self.last_surveydata[x][3] for x in values["-shipsurveytable-"]]:
                     if s in [x.signature for x in self.main.get_surveys()]:
                         self.main.remove_survey(s)
                         break
-            
 
             elif event == "-buyship-" and self.window["-shipyardship-"].get() in self.last_shipyardships:
                 self.main.buy_ship(self.window["-shipyarddrop-"].get(),self.window["-shipyardship-"].get())
@@ -359,6 +360,7 @@ class SpaceTradersGUI:
             elif event == "-register-":
                 print(values["-name-"])
                 print(values["-faction-"])
+                self.main.register(values["-name-"],values["-faction-"])
 
             elif event == "-toLogin-":
                 self.window["-l1-"].update(visible=False)
@@ -382,33 +384,3 @@ if __name__ == "__main__":
     gui = SpaceTradersGUI()
     gui.run()
 
-    exit()
-    sg.theme("darkteal10")
-    register_layout = [[sg.Text("Name"), sg.InputText(key="-name-", size=(30, 10))],
-                       [sg.Text("Faction"), sg.DropDown(
-                           values=["a", "b", "c"], key="-faction-", size=(27, 10))],
-                       [sg.Button("Register"), sg.Button("To Login", k="-toLogin-")]]
-    login_layout = [[sg.Text("Token"), sg.InputText(size=(30, 10))],
-                    [sg.Button("Login"), sg.Button("To Register", k="-toRegister-")]]
-    # first_layout = [[sg.Frame("Register", register_layout)],
-    #           [sg.Frame("Login", login_layout)]]
-    # window = sg.Window(title="Space Traders Client", layout=[[sg.Column(register_layout,key="-l1-",visible=True)],[sg.Column(login_layout,key="-l2-",visible=False)]], margins=(10, 10))
-    window = sg.Window(title="Space Traders Client", layout=[[sg.pin(sg.Column(
-        register_layout, key="-l1-", visible=True)), sg.pin(sg.Column(login_layout, key="-l2-", visible=False))]], margins=(10, 10))
-
-    while True:
-        event, values = window.read()
-        print(event)
-        if event == "Register":
-            print(values["-name-"])
-            print(values["-faction-"])
-        elif event == "-toLogin-":
-            window["-l1-"].update(visible=False)
-            window["-l2-"].update(visible=True)
-        elif event == "-toRegister-":
-            window["-l2-"].update(visible=False)
-            window["-l1-"].update(visible=True)
-        elif event == sg.WIN_CLOSED:
-            break
-
-    window.close()

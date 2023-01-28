@@ -59,7 +59,7 @@ class SpaceTraders:
     def register(self,name,faction):
         try:
             r = self.def_api.register(body={"symbol": name, "faction": faction})
-
+            print(r.body)
             token = r.body["data"]["token"]
             print(token)
             with open(PATH_PREFIX+"acc.txt","a") as f:
