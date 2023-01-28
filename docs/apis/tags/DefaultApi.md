@@ -1,7 +1,7 @@
 <a name="__pageTop"></a>
 # openapi_client.apis.tags.default_api.DefaultApi
 
-All URIs are relative to *https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app*
+All URIs are relative to *https://v2.api.spacetraders.io*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -26,10 +26,10 @@ from openapi_client.model.contract import Contract
 from openapi_client.model.agent import Agent
 from openapi_client.model.faction import Faction
 from pprint import pprint
-# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
+# Defining the host is optional and defaults to https://v2.api.spacetraders.io
 # See configuration.py for a list of all supported configuration parameters.
 configuration = openapi_client.Configuration(
-    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
+    host = "https://v2.api.spacetraders.io"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -84,7 +84,7 @@ dict, frozendict.frozendict,  | frozendict.frozendict,  |  |
 Key | Input Type | Accessed Type | Description | Notes
 ------------ | ------------- | ------------- | ------------- | -------------
 **symbol** | str,  | str,  | How other agents will see your ships and information. | 
-**faction** | str,  | str,  | The faction you choose determines your headquarters. | must be one of ["COSMIC", "VOID", "GALLACTIC", "QUANTUM", "DOMINION", "ASTRO", "CORSAIRS", "UNITED", "SOLITARY", "COBALT", ] 
+**faction** | str,  | str,  | The faction you choose determines your headquarters. | must be one of ["COSMIC", "VOID", "GALACTIC", "QUANTUM", "DOMINION", ] 
 **any_string_name** | dict, frozendict.frozendict, str, date, datetime, int, float, bool, decimal.Decimal, None, list, tuple, bytes, io.FileIO, io.BufferedReader | frozendict.frozendict, str, BoolClass, decimal.Decimal, NoneClass, tuple, bytes, FileIO | any string name can be used but the value must be the correct type | [optional]
 
 ### Return Types, Responses

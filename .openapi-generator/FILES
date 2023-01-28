@@ -195,8 +195,4 @@ setup.py
 test-requirements.txt
 test/__init__.py
 test/test_models/__init__.py
-test/test_models/test_connected_system.py
-test/test_models/test_jump_gate.py
-test/test_models/test_trade_good.py
-test/test_models/test_trade_symbol.py
 tox.ini

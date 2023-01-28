@@ -59,14 +59,9 @@ class SchemaForRequestBodyApplicationJson(
                     enum_value_to_name = {
                         "COSMIC": "COSMIC",
                         "VOID": "VOID",
-                        "GALLACTIC": "GALLACTIC",
+                        "GALACTIC": "GALACTIC",
                         "QUANTUM": "QUANTUM",
                         "DOMINION": "DOMINION",
-                        "ASTRO": "ASTRO",
-                        "CORSAIRS": "CORSAIRS",
-                        "UNITED": "UNITED",
-                        "SOLITARY": "SOLITARY",
-                        "COBALT": "COBALT",
                     }
                 
                 @schemas.classproperty
@@ -78,8 +73,8 @@ class SchemaForRequestBodyApplicationJson(
                     return cls("VOID")
                 
                 @schemas.classproperty
-                def GALLACTIC(cls):
-                    return cls("GALLACTIC")
+                def GALACTIC(cls):
+                    return cls("GALACTIC")
                 
                 @schemas.classproperty
                 def QUANTUM(cls):
@@ -88,26 +83,6 @@ class SchemaForRequestBodyApplicationJson(
                 @schemas.classproperty
                 def DOMINION(cls):
                     return cls("DOMINION")
-                
-                @schemas.classproperty
-                def ASTRO(cls):
-                    return cls("ASTRO")
-                
-                @schemas.classproperty
-                def CORSAIRS(cls):
-                    return cls("CORSAIRS")
-                
-                @schemas.classproperty
-                def UNITED(cls):
-                    return cls("UNITED")
-                
-                @schemas.classproperty
-                def SOLITARY(cls):
-                    return cls("SOLITARY")
-                
-                @schemas.classproperty
-                def COBALT(cls):
-                    return cls("COBALT")
             
             
             class symbol(

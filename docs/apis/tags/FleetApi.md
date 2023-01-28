@@ -1,7 +1,7 @@
 <a name="__pageTop"></a>
 # openapi_client.apis.tags.fleet_api.FleetApi
 
-All URIs are relative to *https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app*
+All URIs are relative to *https://v2.api.spacetraders.io*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -43,10 +43,10 @@ from openapi_client.apis.tags import fleet_api
 from openapi_client.model.waypoint import Waypoint
 from openapi_client.model.chart import Chart
 from pprint import pprint
-# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
+# Defining the host is optional and defaults to https://v2.api.spacetraders.io
 # See configuration.py for a list of all supported configuration parameters.
 configuration = openapi_client.Configuration(
-    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
+    host = "https://v2.api.spacetraders.io"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -164,10 +164,10 @@ from openapi_client.apis.tags import fleet_api
 from openapi_client.model.cooldown import Cooldown
 from openapi_client.model.scanned_ship import ScannedShip
 from pprint import pprint
-# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
+# Defining the host is optional and defaults to https://v2.api.spacetraders.io
 # See configuration.py for a list of all supported configuration parameters.
 configuration = openapi_client.Configuration(
-    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
+    host = "https://v2.api.spacetraders.io"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -297,10 +297,10 @@ from openapi_client.apis.tags import fleet_api
 from openapi_client.model.cooldown import Cooldown
 from openapi_client.model.scanned_system import ScannedSystem
 from pprint import pprint
-# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
+# Defining the host is optional and defaults to https://v2.api.spacetraders.io
 # See configuration.py for a list of all supported configuration parameters.
 configuration = openapi_client.Configuration(
-    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
+    host = "https://v2.api.spacetraders.io"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -430,10 +430,10 @@ from openapi_client.apis.tags import fleet_api
 from openapi_client.model.cooldown import Cooldown
 from openapi_client.model.survey import Survey
 from pprint import pprint
-# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
+# Defining the host is optional and defaults to https://v2.api.spacetraders.io
 # See configuration.py for a list of all supported configuration parameters.
 configuration = openapi_client.Configuration(
-    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
+    host = "https://v2.api.spacetraders.io"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -562,10 +562,10 @@ import openapi_client
 from openapi_client.apis.tags import fleet_api
 from openapi_client.model.ship_nav import ShipNav
 from pprint import pprint
-# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
+# Defining the host is optional and defaults to https://v2.api.spacetraders.io
 # See configuration.py for a list of all supported configuration parameters.
 configuration = openapi_client.Configuration(
-    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
+    host = "https://v2.api.spacetraders.io"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -684,10 +684,10 @@ from openapi_client.model.cooldown import Cooldown
 from openapi_client.model.survey import Survey
 from openapi_client.model.extraction import Extraction
 from pprint import pprint
-# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
+# Defining the host is optional and defaults to https://v2.api.spacetraders.io
 # See configuration.py for a list of all supported configuration parameters.
 configuration = openapi_client.Configuration(
-    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
+    host = "https://v2.api.spacetraders.io"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -849,10 +849,10 @@ import openapi_client
 from openapi_client.apis.tags import fleet_api
 from openapi_client.model.ship import Ship
 from pprint import pprint
-# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
+# Defining the host is optional and defaults to https://v2.api.spacetraders.io
 # See configuration.py for a list of all supported configuration parameters.
 configuration = openapi_client.Configuration(
-    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
+    host = "https://v2.api.spacetraders.io"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -956,10 +956,10 @@ from openapi_client.apis.tags import fleet_api
 from openapi_client.model.ship import Ship
 from openapi_client.model.meta import Meta
 from pprint import pprint
-# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
+# Defining the host is optional and defaults to https://v2.api.spacetraders.io
 # See configuration.py for a list of all supported configuration parameters.
 configuration = openapi_client.Configuration(
-    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
+    host = "https://v2.api.spacetraders.io"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -976,16 +976,52 @@ with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = fleet_api.FleetApi(api_client)
 
-    # example, this endpoint has no required or optional parameters
+    # example passing only optional values
+    query_params = {
+        'page': 1,
+        'limit': 1,
+    }
     try:
         # List Ships
-        api_response = api_instance.get_my_ships()
+        api_response = api_instance.get_my_ships(
+            query_params=query_params,
+        )
         pprint(api_response)
     except openapi_client.ApiException as e:
         print("Exception when calling FleetApi->get_my_ships: %s\n" % e)
 ```
 ### Parameters
-This endpoint does not need any parameter.
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+query_params | RequestQueryParams | |
+accept_content_types | typing.Tuple[str] | default is ('application/json', ) | Tells the server the content type(s) that are accepted by the client
+stream | bool | default is False | if True then the response.content will be streamed and loaded from a file like object. When downloading a file, set this to True to force the code to deserialize the content to a FileSchema file
+timeout | typing.Optional[typing.Union[int, typing.Tuple]] | default is None | the timeout used by the rest client
+skip_deserialization | bool | default is False | when True, headers and body will be unset and an instance of api_client.ApiResponseWithoutDeserialization will be returned
+
+### query_params
+#### RequestQueryParams
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+page | PageSchema | | optional
+limit | LimitSchema | | optional
+
+
+# PageSchema
+
+## Model Type Info
+Input Type | Accessed Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+decimal.Decimal, int,  | decimal.Decimal,  |  | 
+
+# LimitSchema
+
+## Model Type Info
+Input Type | Accessed Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+decimal.Decimal, int,  | decimal.Decimal,  |  | 
 
 ### Return Types, Responses
 
@@ -1049,10 +1085,10 @@ import openapi_client
 from openapi_client.apis.tags import fleet_api
 from openapi_client.model.cooldown import Cooldown
 from pprint import pprint
-# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
+# Defining the host is optional and defaults to https://v2.api.spacetraders.io
 # See configuration.py for a list of all supported configuration parameters.
 configuration = openapi_client.Configuration(
-    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
+    host = "https://v2.api.spacetraders.io"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -1163,10 +1199,10 @@ import openapi_client
 from openapi_client.apis.tags import fleet_api
 from openapi_client.model.ship_cargo import ShipCargo
 from pprint import pprint
-# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
+# Defining the host is optional and defaults to https://v2.api.spacetraders.io
 # See configuration.py for a list of all supported configuration parameters.
 configuration = openapi_client.Configuration(
-    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
+    host = "https://v2.api.spacetraders.io"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -1319,10 +1355,10 @@ from openapi_client.apis.tags import fleet_api
 from openapi_client.model.cooldown import Cooldown
 from openapi_client.model.ship_nav import ShipNav
 from pprint import pprint
-# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
+# Defining the host is optional and defaults to https://v2.api.spacetraders.io
 # See configuration.py for a list of all supported configuration parameters.
 configuration = openapi_client.Configuration(
-    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
+    host = "https://v2.api.spacetraders.io"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -1475,10 +1511,10 @@ from openapi_client.apis.tags import fleet_api
 from openapi_client.model.ship_nav import ShipNav
 from openapi_client.model.ship_fuel import ShipFuel
 from pprint import pprint
-# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
+# Defining the host is optional and defaults to https://v2.api.spacetraders.io
 # See configuration.py for a list of all supported configuration parameters.
 configuration = openapi_client.Configuration(
-    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
+    host = "https://v2.api.spacetraders.io"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -1629,10 +1665,10 @@ import openapi_client
 from openapi_client.apis.tags import fleet_api
 from openapi_client.model.ship_nav import ShipNav
 from pprint import pprint
-# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
+# Defining the host is optional and defaults to https://v2.api.spacetraders.io
 # See configuration.py for a list of all supported configuration parameters.
 configuration = openapi_client.Configuration(
-    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
+    host = "https://v2.api.spacetraders.io"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -1750,10 +1786,10 @@ from openapi_client.model.ship_cargo import ShipCargo
 from openapi_client.model.market_transaction import MarketTransaction
 from openapi_client.model.agent import Agent
 from pprint import pprint
-# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
+# Defining the host is optional and defaults to https://v2.api.spacetraders.io
 # See configuration.py for a list of all supported configuration parameters.
 configuration = openapi_client.Configuration(
-    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
+    host = "https://v2.api.spacetraders.io"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -1909,10 +1945,10 @@ from openapi_client.model.ship_type import ShipType
 from openapi_client.model.ship import Ship
 from openapi_client.model.agent import Agent
 from pprint import pprint
-# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
+# Defining the host is optional and defaults to https://v2.api.spacetraders.io
 # See configuration.py for a list of all supported configuration parameters.
 configuration = openapi_client.Configuration(
-    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
+    host = "https://v2.api.spacetraders.io"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -2034,10 +2070,10 @@ from openapi_client.apis.tags import fleet_api
 from openapi_client.model.ship_fuel import ShipFuel
 from openapi_client.model.agent import Agent
 from pprint import pprint
-# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
+# Defining the host is optional and defaults to https://v2.api.spacetraders.io
 # See configuration.py for a list of all supported configuration parameters.
 configuration = openapi_client.Configuration(
-    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
+    host = "https://v2.api.spacetraders.io"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -2156,10 +2192,10 @@ from openapi_client.model.ship_cargo import ShipCargo
 from openapi_client.model.market_transaction import MarketTransaction
 from openapi_client.model.agent import Agent
 from pprint import pprint
-# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
+# Defining the host is optional and defaults to https://v2.api.spacetraders.io
 # See configuration.py for a list of all supported configuration parameters.
 configuration = openapi_client.Configuration(
-    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
+    host = "https://v2.api.spacetraders.io"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -2314,10 +2350,10 @@ from openapi_client.apis.tags import fleet_api
 from openapi_client.model.ship_cargo import ShipCargo
 from openapi_client.model.cooldown import Cooldown
 from pprint import pprint
-# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
+# Defining the host is optional and defaults to https://v2.api.spacetraders.io
 # See configuration.py for a list of all supported configuration parameters.
 configuration = openapi_client.Configuration(
-    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
+    host = "https://v2.api.spacetraders.io"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -2522,10 +2558,10 @@ import openapi_client
 from openapi_client.apis.tags import fleet_api
 from openapi_client.model.ship_cargo import ShipCargo
 from pprint import pprint
-# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
+# Defining the host is optional and defaults to https://v2.api.spacetraders.io
 # See configuration.py for a list of all supported configuration parameters.
 configuration = openapi_client.Configuration(
-    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
+    host = "https://v2.api.spacetraders.io"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -2680,10 +2716,10 @@ from openapi_client.apis.tags import fleet_api
 from openapi_client.model.ship_nav import ShipNav
 from openapi_client.model.ship_fuel import ShipFuel
 from pprint import pprint
-# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
+# Defining the host is optional and defaults to https://v2.api.spacetraders.io
 # See configuration.py for a list of all supported configuration parameters.
 configuration = openapi_client.Configuration(
-    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
+    host = "https://v2.api.spacetraders.io"
 )
 
 # The client must configure the authentication and authorization parameters

@@ -1,7 +1,7 @@
 <a name="__pageTop"></a>
 # openapi_client.apis.tags.agents_api.AgentsApi
 
-All URIs are relative to *https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app*
+All URIs are relative to *https://v2.api.spacetraders.io*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -23,10 +23,10 @@ import openapi_client
 from openapi_client.apis.tags import agents_api
 from openapi_client.model.agent import Agent
 from pprint import pprint
-# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
+# Defining the host is optional and defaults to https://v2.api.spacetraders.io
 # See configuration.py for a list of all supported configuration parameters.
 configuration = openapi_client.Configuration(
-    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
+    host = "https://v2.api.spacetraders.io"
 )
 
 # The client must configure the authentication and authorization parameters

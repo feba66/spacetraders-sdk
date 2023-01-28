@@ -1,7 +1,7 @@
 <a name="__pageTop"></a>
 # openapi_client.apis.tags.factions_api.FactionsApi
 
-All URIs are relative to *https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app*
+All URIs are relative to *https://v2.api.spacetraders.io*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -24,10 +24,10 @@ import openapi_client
 from openapi_client.apis.tags import factions_api
 from openapi_client.model.faction import Faction
 from pprint import pprint
-# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
+# Defining the host is optional and defaults to https://v2.api.spacetraders.io
 # See configuration.py for a list of all supported configuration parameters.
 configuration = openapi_client.Configuration(
-    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
+    host = "https://v2.api.spacetraders.io"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -131,10 +131,10 @@ from openapi_client.apis.tags import factions_api
 from openapi_client.model.meta import Meta
 from openapi_client.model.faction import Faction
 from pprint import pprint
-# Defining the host is optional and defaults to https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app
+# Defining the host is optional and defaults to https://v2.api.spacetraders.io
 # See configuration.py for a list of all supported configuration parameters.
 configuration = openapi_client.Configuration(
-    host = "https://api-server-2-0-0-rc-2-vxxwq5xqdq-uc.a.run.app"
+    host = "https://v2.api.spacetraders.io"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -151,16 +151,52 @@ with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = factions_api.FactionsApi(api_client)
 
-    # example, this endpoint has no required or optional parameters
+    # example passing only optional values
+    query_params = {
+        'page': 1,
+        'limit': 1,
+    }
     try:
         # List Factions
-        api_response = api_instance.get_factions()
+        api_response = api_instance.get_factions(
+            query_params=query_params,
+        )
         pprint(api_response)
     except openapi_client.ApiException as e:
         print("Exception when calling FactionsApi->get_factions: %s\n" % e)
 ```
 ### Parameters
-This endpoint does not need any parameter.
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+query_params | RequestQueryParams | |
+accept_content_types | typing.Tuple[str] | default is ('application/json', ) | Tells the server the content type(s) that are accepted by the client
+stream | bool | default is False | if True then the response.content will be streamed and loaded from a file like object. When downloading a file, set this to True to force the code to deserialize the content to a FileSchema file
+timeout | typing.Optional[typing.Union[int, typing.Tuple]] | default is None | the timeout used by the rest client
+skip_deserialization | bool | default is False | when True, headers and body will be unset and an instance of api_client.ApiResponseWithoutDeserialization will be returned
+
+### query_params
+#### RequestQueryParams
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+page | PageSchema | | optional
+limit | LimitSchema | | optional
+
+
+# PageSchema
+
+## Model Type Info
+Input Type | Accessed Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+decimal.Decimal, int,  | decimal.Decimal,  |  | 
+
+# LimitSchema
+
+## Model Type Info
+Input Type | Accessed Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+decimal.Decimal, int,  | decimal.Decimal,  |  | 
 
 ### Return Types, Responses
 
