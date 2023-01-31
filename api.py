@@ -9,6 +9,19 @@ import json
 
 PATH_PREFIX = "spacetraders-sdk/"
 
+@dataclass
+class Error():
+    message: str
+    code: int
+    data: Optional[dict]
+
+    def __init__(self,inpu) -> None:
+        j = json.loads(inpu)
+        self.message = j["error"]["message"]
+        self.code = j["error"]["code"]
+        self.data = j["error"]["data"] if "data" in j["error"] else None
+
+
 class SpaceTraders:
     api_client: openapi_client.ApiClient
 
@@ -164,9 +177,14 @@ class SpaceTraders:
             c,s = (Cooldown(api_response.body["data"]["cooldown"]),[Survey(s) for s in api_response.body["data"]["surveys"]])
             self.cooldowns[shipSymbol]=c
             self.surveys.extend(s)
+            print(f"Surveyed {s[0].signature} {[x.symbol for x in s[0].deposits]}")
+            with open("surveys.csv","a") as f:
+                for su in s:
+                    diff = (datetime.strptime(su.expiration,"%Y-%m-%dT%H:%M:%S.%fZ")- datetime.utcnow()).total_seconds()
+                    f.write(f"{su.signature};{su.size};{su.symbol};{diff};{su.expiration};{';'.join([x.symbol for x in su.deposits])}\n")
             return (c,s)
         except openapi_client.ApiException as e:
-            print("Exception when calling FleetApi->create_survey: %s\n" % e)
+            self.handle_error(e,{"shipSymbol":shipSymbol,"method":"FleetApi->create_survey"})
     def dock_ship(self,shipSymbol):
         try:
             print(f"Dock {shipSymbol}")
@@ -176,7 +194,7 @@ class SpaceTraders:
                 self.ships[shipSymbol].nav=nav
             return nav
         except openapi_client.ApiException as e:
-            print("Exception when calling FleetApi->dock_ship: %s\n" % e)
+            self.handle_error(e,{"shipSymbol":shipSymbol,"method":"FleetApi->dock_ship"})
     def extract_resources(self,shipSymbol,survey=None):
         try:
             print(f"Extracting with {shipSymbol}")
@@ -185,9 +203,11 @@ class SpaceTraders:
             self.cooldowns[shipSymbol]=co
             if shipSymbol in self.ships:
                 self.ships[shipSymbol].cargo=ca
+            with open("extractions.csv","a") as f:
+                f.write(f"{'None' if not survey else survey.dict()['signature']};{ex.shipSymbol};{ex.yield_.symbol};{ex.yield_.units}\n")
             return (co,ca,ex)
         except openapi_client.ApiException as e:
-            print("Exception when calling FleetApi->extract_resources: %s\n" % e)
+            self.handle_error(e,{"shipSymbol":shipSymbol,"survey":survey,"method":"FleetApi->extract_resources"})
     def get_my_ship(self,shipSymbol):
         try:
             print(f"Get Ship {shipSymbol}")
@@ -286,7 +306,7 @@ class SpaceTraders:
             if shipSymbol in self.ships:
                 self.ships[shipSymbol].cargo=cargo
                 
-            print(f"Sold {units}x {good} from {shipSymbol}")
+            print(f"Sold {units}x {good} from {shipSymbol} for {transaction.pricePerUnit} each")
             return (self.agent,cargo,transaction)
 
         except openapi_client.ApiException as e:
@@ -382,10 +402,50 @@ class SpaceTraders:
                 break
     def system_sym_f_wayp(self,waypointSymbol):
         return waypointSymbol[0:waypointSymbol.find("-",4)]
+    
+    def handle_error(self,error:openapi_client.ApiException,data:dict|None = None):
+        j = Error(error.body)
+        with open("errors.csv","a") as f:
+            f.write(f"{error.status};{j.code};{j.message.replace(';','_:')}\n")
+        if error.status == 409:
+            if j.code == 4224:
+                msg = j.message
+                survey_id = msg[msg.find("Survey ")+7:msg.find(" has ")]
+                self.remove_survey(survey_id)
+                with open("exhausted.csv","a") as f:
+                    f.write(f"{survey_id}\n")
+                self.get_ship_cooldown(data["shipSymbol"])
+                self.dock_ship(data["shipSymbol"])
+                for c in self.ships[data["shipSymbol"]].cargo.inventory:
+                    if c.symbol != "ANTIMATTER":
+                        self.sell_cargo(data["shipSymbol"],c.symbol,c.units)
+
+            elif j.code == 4107:
+                print("Agent does not Exist")
+                exit()
+            elif j.code == 4000:
+                self.get_ship_cooldown(data["shipSymbol"])
+            else:
+                pprint(error)
+        elif error.status == 400:
+            if j.code == 400:
+                self.dock_ship(data["shipSymbol"])
+            elif j.code == 4228:
+                sh = self.get_my_ship(data["shipSymbol"])
+                self.dock_ship(data["shipSymbol"])
+                for c in sh.cargo.inventory:
+                    if c.symbol != "ANTIMATTER":
+                        self.sell_cargo(data["shipSymbol"],c.symbol,c.units)
+                pass
+            else:
+                pprint(error)
+        else:
+            pprint(error)
+
     #endregion
 
     #region nop
-    def nop(): pass # VS Code wont let me close the last region that contains a def so this is a fix for that
+    def __nop(): pass # VS Code wont let me close the last region that contains a def so this is a fix for that
     #endregion
 
 if __name__ == "__main__":
@@ -547,14 +607,3 @@ if __name__ == "__main__":
     # pprint(st.get_market(copperAlu))
 
     pprint([x.symbol for x in st.get_factions()])
-
-
-    # st.dock_ship(ship)
-    # pprint(st.refuel_ship(ship))
-    # pprint(st.get_agent())
-    # pprint(st.get_my_ship(drone))
-    # pprint(st.transfer_cargo(ship,"ICE_WATER",11,drone))
-    # pprint(st.transfer_cargo(ship,"QUARTZ_SAND",10,drone))
-    # st.dock_ship(ship)
-    # pprint(st.sell_cargo(ship,"COPPER_ORE",8))
-    # pprint(st.get_shipyard(system,"X1-UV97-44217E"))

@@ -12,7 +12,10 @@ class SpaceTradersGUI:
     window: sg.Window
     treedata: sg.TreeData
     system_treedata: sg.TreeData
+    auto_treedata: sg.TreeData
     canvases: dict[Canvas.TKCanvas, FigureCanvasTkAgg]
+
+    auto_ships = {}
 
     last_shipyards = []
     last_shipyardships = []
@@ -58,9 +61,9 @@ class SpaceTradersGUI:
                                sg.Tab("Ship", self.get_ship_layout(), k="-shiptab-"),
                                sg.Tab("Shipyards", self.get_shipyards_layout(), k="-shipyardtab-"),
                                sg.Tab("System", self.get_system_layout(), k="-systemtab-"),
-                               sg.Tab("Systems", [
-                                      [sg.Canvas(expand_x=True, expand_y=True, k="-systemscanvas-")]], k="-systemstab-"),
-                               ]],
+                               sg.Tab("Systems", [[sg.Canvas(expand_x=True, expand_y=True, k="-systemscanvas-")]], k="-systemstab-"),
+                               sg.Tab("Auto", self.get_auto_layout(), k="-autotab-"),
+                             ]],
                              enable_events=True,
                              k="-gametabgroup-",
                              size=(1000, 600)),
@@ -172,6 +175,10 @@ class SpaceTradersGUI:
         return [[sg.Tree(data=self.treedata, headings=['st', 'nd', 'th'], change_submits=True, auto_size_columns=False, header_border_width=4,
                     # header_relief=RELIEF_GROOVE,
                     key='-systemtree-', show_expanded=True, expand_x=True, expand_y=True)]]
+    def get_auto_layout(self):
+        return [[sg.Tree(data=self.treedata, headings=['frame','auto'], change_submits=True, auto_size_columns=False, header_border_width=4,
+                    # header_relief=RELIEF_GROOVE,
+                    key='-autotree-', show_expanded=True, expand_x=True, expand_y=True)]]
 
     def update_system_tree(self):
         self.system_treedata = sg.TreeData()
@@ -190,49 +197,19 @@ class SpaceTradersGUI:
                 self.system_treedata.insert(k, k+"orbitals-", "Orbitals", [])
                 for o in w.orbitals:
                     self.system_treedata.insert(k+"orbitals-", k+"orbitals-"+str(o.symbol), str(o.symbol), [])
-                    
-        # ships = self.main.get_ships()
-        # for ship in ships.values():
-        #     k = f"-{ship.symbol}-"
-
-        #     status = ship.nav.status != ship.nav.status.DOCKED
-        #     self.treedata.insert("", k, ship.symbol, [
-        #                          ship.nav.status.name, ship.nav.waypointSymbol, ship.nav.route.arrival if status else ""])
-        #     self.treedata.insert(k, k+"stats-", "Stats", [])
-        #     self.treedata.insert(k+"stats-", k+"stats-cons-", "Consumables", [])
-
-        #     self.treedata.insert(k+"stats-cons-", k+"stats-cons-fuel", "Fuel",
-        #                          [ship.fuel.current, ship.fuel.capacity])
-        #     self.treedata.insert(k+"stats-cons-", k+"stats-cons-crew", "Crew",
-        #                          [ship.crew.current, ship.crew.capacity])
-        #     cur_power = ship.engine.requirements.power + ship.frame.requirements.power \
-        #         + sum([x.requirements.power for x in ship.modules]) + \
-        #         sum([x.requirements.power for x in ship.mounts])
-        #     self.treedata.insert(k+"stats-cons-", k+"stats-cons-powr",
-        #                          "Power", [cur_power, ship.reactor.powerOutput])
-        #     self.treedata.insert(k+"stats-", k+"stats-frame", "Frame", [ship.frame.name])
-        #     self.treedata.insert(k+"stats-", k+"stats-engine", "Engine",
-        #                          [ship.engine.name, ship.engine.speed])
-        #     self.treedata.insert(k+"stats-", k+"stats-reactor", "Reactor",
-        #                          [ship.reactor.name, ship.reactor.powerOutput])
-        #     self.treedata.insert(k+"stats-", k+"stats-role", "Role", [ship.registration.role])
-
-        #     self.treedata.insert(k, k+"cargo-", "Cargo", [ship.cargo.units, ship.cargo.capacity])
-        #     for c in ship.cargo.inventory:
-        #         self.treedata.insert(k+"cargo-", k+f"cargo-{c.symbol}-", c.name, [c.units])
-
-        #     self.treedata.insert(k, k+"mounts-", "Mounts",
-        #                          [len(ship.mounts), ship.frame.mountingPoints])
-        #     for m in ship.mounts:
-        #         self.treedata.insert(
-        #             k+"mounts-", k+f"mounts-{m.symbol}-", m.name, [m.strength if m.strength else None])
-
-        #     self.treedata.insert(k, k+"modules-", "Modules",
-        #                          [len(ship.modules), ship.frame.moduleSlots])
-        #     for m in ship.modules:
-        #         self.treedata.insert(k+"modules-", k+f"modules-{m.symbol}-", m.name, [
-        #                              m.capacity if m.capacity else m.range if m.range else None])
         self.window["-systemtree-"].update(values=self.system_treedata)
+    def update_auto_tree(self):
+        self.auto_treedata = sg.TreeData()
+        
+        for s in self.main.get_ships().values():
+            k = f"-{s.symbol}-"
+            print(k)
+            if k in self.auto_ships:
+                self.auto_treedata.insert("",k,s.symbol,[str(s.frame.name.replace("Frame ","")),"X"])
+            else:
+                self.auto_treedata.insert("",k,s.symbol,[str(s.frame.name.replace("Frame ",""))," "])
+
+        self.window["-autotree-"].update(values=self.auto_treedata)
 
     def update_ship(self):
         if not self._shipdrop_populated or self._shipdrop_populated_time and (datetime.utcnow()-self._shipdrop_populated_time) > 300:
@@ -253,16 +230,14 @@ class SpaceTradersGUI:
                 value=f"Fuel: {s.fuel.current}/{s.fuel.capacity}\nCargo: {s.cargo.units}/{s.cargo.capacity}")
             remaining = ""
             if s.nav.status == s.nav.status.IN_TRANSIT:
-                arrive = self.main.parse_time(s.nav.route.arrival)
-                start = self.main.parse_time(s.fuel.consumed.timestamp)
+                arrive, start = self.main.parse_time(s.nav.route.arrival), self.main.parse_time(s.fuel.consumed.timestamp)
                 diff = self.main.get_time_diff(arrive, datetime.utcnow())
                 if diff < 0:
                     percentLeft = 0
                 total = self.main.get_time_diff(arrive, start)
-                remaining = f" Remaining: {max(round(diff,5),0)}"
+                remaining = f" Remaining: {max(round(diff,3),0)}"
                 percentLeft = diff/total
-                self.window["-shipstatusbar-"].update(
-                    current_count=int((1-percentLeft)*10000), visible=True)
+                self.window["-shipstatusbar-"].update(current_count=int((1-percentLeft)*10000), visible=True)
             else:
                 self.window["-shipstatusbar-"].update(visible=False)
             self.window["-shipstatustxt-"].update(
@@ -344,6 +319,42 @@ class SpaceTradersGUI:
         return [sg.pin(sg.Column(self.register_layout, key="-l1-", visible=False)),
                 sg.pin(sg.Column(self.login_layout, key="-l2-", visible=True)),
                 sg.pin(sg.Column(self.game_layout, key="-l3-", visible=False))]
+    
+    def auto(self):
+        ships = self.main.get_ships()
+        best_survey = None
+        mw = 0
+        if len(self.auto_ships)>0:
+            for surv in self.main.get_surveys():
+                w = self.main.determine_worth([x.symbol for x in surv.deposits])
+                if w > mw:
+                    mw = w
+                    best_survey = surv
+        for a in self.auto_ships:
+            if a[1:-1] in ships:
+                s = ships[a[1:-1]]
+                cooldown = self.main.get_cooldown(s.symbol)
+                diff = 1
+                if cooldown:
+                    end = self.main.parse_time(cooldown.expiration)
+                    diff = self.main.get_time_diff(end, datetime.utcnow())
+                if not cooldown or diff <0:
+                    try:
+                        if mw < 45:
+                            if s.nav.status != s.nav.status.IN_ORBIT:
+                                self.main.orbit_ship(s.symbol)
+                            r = self.main.survey(s.symbol)
+                        else:
+                            if s.nav.status != s.nav.status.DOCKED:
+                                self.main.dock_ship(s.symbol)
+                            r = self.main.excavate(s.symbol,best_survey)
+                            if r == None:
+                                pass
+                            else:
+                                self.main.sell_good(r[2].shipSymbol,r[2].yield_.symbol,r[2].yield_.units)
+                    except TypeError as e:
+                        pprint(e)
+
 
     def update(self, manual=False):
         if self.main._is_logged_in:
@@ -367,12 +378,16 @@ class SpaceTradersGUI:
             elif e == "-systemstab-" and manual:
                 self.draw_fig(self.window["-systemscanvas-"].TKCanvas,
                               self.main.get_systems_plot())
+            elif e == "-autotab-"  and manual:
+                self.update_auto_tree()
+            
+            self.auto()
 
     def run(self):
         self.window = sg.Window("Space Traders GUI", layout=[[self.get_pins]], margins=(
             10, 10), finalize=True, resizable=False)
         while True:
-            event, values = self.window.read(timeout=50, timeout_key="-update-")
+            event, values = self.window.read(timeout=100, timeout_key="-update-")
 
             if event == "-update-":
                 self.update()
@@ -445,6 +460,10 @@ class SpaceTradersGUI:
                 self.main.buy_ship(self.window["-shipyarddrop-"].get(),
                                    self.window["-shipyardship-"].get())
 
+                ships = self.main.get_ships()
+                self.window["-shipdrop-"].update(values=list(ships.keys()))
+                self._shipdrop_populated = True
+
             elif event == "-login-":
                 if self.main.login(values["-token-"].replace("\n", "")):
                     self.window["-l2-"].update(visible=False)
@@ -463,6 +482,17 @@ class SpaceTradersGUI:
             elif event == "-toRegister-":
                 self.window["-l2-"].update(visible=False)
                 self.window["-l1-"].update(visible=True)
+                
+            elif event == "-autotree-":
+                print(values["-autotree-"])
+                print(self.auto_ships)
+
+                if len(values["-autotree-"])>0:
+                    if values["-autotree-"][0] in self.auto_ships:
+                        self.auto_ships.pop(values["-autotree-"][0])
+                    else:
+                        self.auto_ships[values["-autotree-"][0]]=1
+                    self.update_auto_tree()
 
             elif event == sg.WIN_CLOSED:
                 break

@@ -14,6 +14,8 @@ sys.path.append(parent)
 
 from api import SpaceTraders
 
+
+
 @dataclass
 class Account:
     name: str
@@ -196,6 +198,30 @@ class Main:
         return (big-small).total_seconds()
     def parse_time(self,tstr):
         return datetime.strptime(tstr,Main.FORMAT_STR)
+
+        
+    WORTH = {
+        "ICE_WATER":14,
+        "QUARTZ_SAND":19,
+        "SILICON_CRYSTALS":34,
+        "AMMONIA_ICE":39,
+        "IRON_ORE":44,
+        "ALUMINUM_ORE":49,
+        "COPPER_ORE":54,
+        "SILVER_ORE":59,
+        "GOLD_ORE":64,
+        "PLATINUM_ORE":69,
+        "DIAMONDS":3946,
+    }
+
+    def determine_worth(self,materials:list[str]):
+        w = 0
+        for m in materials:
+            if m not in self.WORTH:
+                print("No price set for "+ m)
+            else:
+                w+=self.WORTH[m]
+        return w/len(materials)
 
 if __name__ == "__main__":
     m = Main()
