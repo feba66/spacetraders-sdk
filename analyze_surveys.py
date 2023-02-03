@@ -26,22 +26,22 @@ def determine_worth(materials:list[str]):
             w+=WORTH[m]
     return w/len(materials)
 
-with open("surveys_v1.csv","r") as f:
-    line = f.readlines()
+# with open("surveys_v1.csv","r") as f:
+#     line = f.readlines()
 
 d = defaultdict(lambda: 0)
 size = defaultdict(lambda:0)
 duration = defaultdict(lambda:[])
 mw = 0
-for l in line:
-    s = l.replace("\n","").split(";")[4:]
-    size[l.replace("\n","").split(";")[1]]+=1
-    for ressource in s:
-        d[ressource]+=1
-    w = determine_worth(s)
-    if w > mw:
-        print(f"Worth: {w}  {s}")
-        mw=w
+# for l in line:
+#     s = l.replace("\n","").split(";")[4:]
+#     size[l.replace("\n","").split(";")[1]]+=1
+#     for ressource in s:
+#         d[ressource]+=1
+#     w = determine_worth(s)
+#     if w > mw:
+#         print(f"Worth: {w}  {s}")
+#         mw=w
 
 with open("surveys.csv","r") as f:
     line = f.readlines()
@@ -53,10 +53,10 @@ for l in line:
     duration[spl[1]].append((spl[1],float(spl[3])))
     for ressource in s:
         d[ressource]+=1
-    w = determine_worth(s)
-    if w > mw:
-        print(f"Worth: {w}  {s}")
-        mw=w
+    # w = determine_worth(s)
+    # if w > mw:
+    #     print(f"Worth: {w}  {s}")
+    #     mw=w
 if "EXHAUSTED" in d:
     del d["EXHAUSTED"]
 # ld = list(size.items())
@@ -81,7 +81,8 @@ ax.bar([x[0] for x in ld],[x[1] for x in ld])
 # ax.set_ylabel("Expire time in min")
 # ax.set_xticks([1,2,3])
 # ax.set_xticklabels(duration.keys())
-ax.set_title("Survey Material Occurences")
+# ax.set_title("Survey Material Occurences")
+ax.set_title("Survey Sizes")
 ax.set_ylabel("Count")
 fig.autofmt_xdate()
 plt.tight_layout()

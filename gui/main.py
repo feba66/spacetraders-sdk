@@ -193,6 +193,8 @@ class Main:
         return self.st.surveys
     def remove_survey(self,id):
         return self.st.remove_survey(id)
+    def get_all_waypoints(self):
+        return self.st.waypoints
 
     def get_time_diff(self,big,small):
         return (big-small).total_seconds()

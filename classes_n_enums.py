@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
+from json import JSONDecoder, JSONEncoder
+import json
 from typing import Optional
 # region Enums
 class myEnum(Enum): 
@@ -778,8 +780,8 @@ class SystemWaypoint:
     
     def __init__(self,data) -> None:
         self.symbol=data["symbol"]
-        self.x=data["x"].as_int_oapg
-        self.y=data["y"].as_int_oapg
+        self.x=data["x"].as_int_oapg if type(data["x"]) != int else data["x"]
+        self.y=data["y"].as_int_oapg if type(data["y"]) != int else data["y"]
         self.type=WaypointType[data["type"]]
 @dataclass
 class System:
@@ -794,8 +796,8 @@ class System:
     def __init__(self,data) -> None:
         self.symbol=data["symbol"]
         self.sectorSymbol=data["sectorSymbol"]
-        self.x=data["x"].as_int_oapg
-        self.y=data["y"].as_int_oapg
+        self.x=data["x"].as_int_oapg if type(data["x"]) != int else data["x"]
+        self.y=data["y"].as_int_oapg if type(data["y"]) != int else data["y"]
         self.type=SystemType[data["type"]]
         self.waypoints=[SystemWaypoint(w) for w in data["waypoints"]]
         self.factions=[str(f) for f in data["factions"]]
@@ -1019,3 +1021,33 @@ class Extraction:
         self.yield_=ExtractionYield(data["yield"])
         self.shipSymbol=data["shipSymbol"]
 # endregion
+
+
+class SpaceTradersEncoder(JSONEncoder):
+
+    def default(self, object):
+
+        if isinstance(object, System):
+            return object.__dict__
+        elif isinstance(object, SystemWaypoint):
+            return object.__dict__
+        elif issubclass(type(object), myEnum):
+            return object.name
+            
+        else:
+            return json.JSONEncoder.default(self, object)
+class SpaceTradersDecoder(JSONDecoder):
+    def __init__(self, *args, **kwargs):
+        json.JSONDecoder.__init__(self, object_hook=self.object_hook, *args, **kwargs)
+    def object_hook(self, dct):
+        if "symbol" in dct and "sectorSymbol" in dct and "x" in dct and "y" in dct and "type" in dct and "waypoints" in dct and "factions" in dct:
+            return System(dct)
+        return dct
+
+"""symbol:str
+    sectorSymbol:str
+    x:int
+    y:int
+    type: SystemType
+    waypoints: list[SystemWaypoint]
+    factions: list[str]"""

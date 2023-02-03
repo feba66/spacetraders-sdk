@@ -13,6 +13,7 @@ class SpaceTradersGUI:
     treedata: sg.TreeData
     system_treedata: sg.TreeData
     auto_treedata: sg.TreeData
+    market_treedata: sg.TreeData
     canvases: dict[Canvas.TKCanvas, FigureCanvasTkAgg]
 
     auto_ships = {}
@@ -38,20 +39,19 @@ class SpaceTradersGUI:
         self.canvases = {}
         self.last_surveydata = []
 
+    #region layouts
     @property
     def register_layout(self):
         return [[sg.Text("Name"), sg.InputText(key="-name-", size=(30, 10))],
                 [sg.Text("Faction"), sg.DropDown(
                     values=["COSMIC", "VOID", "GALACTIC", "QUANTUM", "DOMINION"], key="-faction-", size=(27, 10))],
                 [sg.Button("Register", k="-register-"), sg.Button("To Login", k="-toLogin-")]]
-
     @property
     def login_layout(self):
         recent = self.main.get_recent()
         default = recent.token if recent else ""
         return [[sg.Text("Token"), sg.InputText(size=(30, 10), k="-token-", default_text=default)],
                 [sg.Button("Login", k="-login-"), sg.Button("To Register", k="-toRegister-")]]
-
     @property
     def game_layout(self):
         return [[sg.Text("Youre logged in now", k="-logintext-"), sg.Push(), sg.Text("Credits: ", k="-creditstext-", size=(16, 1))],
@@ -63,6 +63,7 @@ class SpaceTradersGUI:
                                sg.Tab("System", self.get_system_layout(), k="-systemtab-"),
                                sg.Tab("Systems", [[sg.Canvas(expand_x=True, expand_y=True, k="-systemscanvas-")]], k="-systemstab-"),
                                sg.Tab("Auto", self.get_auto_layout(), k="-autotab-"),
+                               sg.Tab("Markets", self.get_market_layout(), k="-markettab-"),
                              ]],
                              enable_events=True,
                              k="-gametabgroup-",
@@ -76,38 +77,99 @@ class SpaceTradersGUI:
              ], scrollable=True, vertical_scroll_only=True, expand_x=True, expand_y=True)
 
         ]]
-
-    def update_agent(self):
-        agent = self.main.get_agent()
-        string = f"Name: {agent.symbol}\nAccount ID: {agent.accountId}\nHeadquarter: {agent.headquarters}\nCredits: {agent.credits}"
-        self.window["-agentsymbol-"].update(value=string)
-
-    def update_contract(self):
-        contracts = self.main.get_contracts()
-        string = ""
-        first = True
-        for co in contracts:
-            c = contracts[co]
-            if not first:
-                string += "\n\n"
-            else:
-                first = False
-            string += f"Id: {c.id}\n  Accepted: {c.accepted}\n  Fulfilled: {c.fulfilled}\n  Faction: {c.factionSymbol}\n  Expiration: {c.expiration}\n  Type: {c.type}\n  Terms:\n    Deadline: {c.terms.deadline}\n    onAccepted: {c.terms.payment.onAccepted}\n    onFulfilled: {c.terms.payment.onFulfilled}\n    Deliver:"
-
-            firstd = True
-            if not firstd:
-                string += "\n"
-            else:
-                firstd = False
-            for d in c.terms.deliver:
-                string += f"\n      {d.tradeSymbol}:\n        Units: {d.unitsFulfilled}/{d.unitsRequired}\n        To: {d.destinationSymbol}"
-        self.window["-contractsymbol-"].update(value=string)
-
     def get_ships_layout(self):
         return [[sg.Tree(data=self.treedata, headings=['Current', 'Maximum', '3'], change_submits=True, auto_size_columns=True, header_border_width=4,
                          # header_relief=RELIEF_GROOVE,
                          key='-tree-', show_expanded=True, expand_x=True, expand_y=True)]]
+    def get_ship_layout(self):
+        return [[sg.Drop([], k="-shipdrop-", s=(20, 10), enable_events=True)],
+                [sg.Text("ship", k="-shiptxt-")],
+                [sg.Text("fuel", k="-shipfueltxt-")],
+                [sg.Text("shipstatus", k="-shipstatustxt-"), sg.ProgressBar(10000,
+                                                                            k="-shipstatusbar-", size=(100, 10), visible=False)],
+                [sg.Text("Cooldown: "), sg.ProgressBar(
+                    10000, k="-shipcooldownbar-", size=(100, 10), visible=False)],
+                [sg.Button("Dock", k="-btndock-"), sg.Button("Orbit", k="-btnorbit-"), sg.Button("Navigate to:", k="-btnnavigate-"), sg.Drop([], k="-shipnavdrop-", s=(20, 10)),
+                 sg.Button("Excavate", k="-btnexcavate-"), sg.Button("Survey",
+                                                                     k="-btnsurvey-"), sg.Button("Refuel", k="-btnrefuel-"),
+                 sg.Button("Sell", k="-btnsell-"), sg.Button("Jettison", k="-btnjettison-"), sg.Button("Deliver", k="-btndeliver-")],
+                [sg.Table([], ["Symbol", "Units"], k="-shipcargotable-", expand_x=True)],
+                [sg.Table([], ["Symbol", "Size", "Deposits", "sig"], k="-shipsurveytable-",
+                          expand_x=True, col_widths=[120, 100, 570, 170])],
+                [sg.Button("Delete survey", k="-btndelsurvey-")]
+                ]
+    def get_system_layout(self):
+        return [[sg.Tree(data=self.treedata, headings=['st', 'nd', 'th'], change_submits=True, auto_size_columns=False, header_border_width=4,
+                    # header_relief=RELIEF_GROOVE,
+                    key='-systemtree-', show_expanded=True, expand_x=True, expand_y=True)]]
+    def get_auto_layout(self):
+        return [[sg.Tree(data=self.treedata, headings=['frame','auto'], change_submits=True, auto_size_columns=False, header_border_width=4,
+                    # header_relief=RELIEF_GROOVE,
+                    key='-autotree-', show_expanded=True, expand_x=True, expand_y=True)]]
+    def get_market_layout(self):
+        return [[sg.Tree(data=self.treedata, headings=['Sell','Buy'], change_submits=True, auto_size_columns=False, header_border_width=4,
+                    # header_relief=RELIEF_GROOVE,
+                    key='-markettree-', show_expanded=True, expand_x=True, expand_y=True)]]
+    def get_shipyards_layout(self):
+        return [[sg.Column([
+            [sg.Drop([], k="-shipyarddrop-", size=(20, 1))],
+            [sg.Text("", k="-shipyardtext-")],
+            [sg.Drop([], "Select Shipyard first", k="-shipyardship-", size=(20, 1))],
+            [sg.Button("Buy", k="-buyship-")]
+        ],
+            scrollable=True, vertical_scroll_only=True,
+            expand_x=True, expand_y=True)]]
+    #endregion
+    #region trees
+    def update_system_tree(self):
+        self.system_treedata = sg.TreeData()
+        done_sys = []
+        for s in self.main.get_ships().values():
+            if not s.nav.systemSymbol in done_sys:
+                way = self.main.get_waypoints(s.nav.systemSymbol)
+                for w in way:
+                    print(w.symbol+" "+str([t.symbol for t in w.traits]))
+                done_sys.append(s.nav.systemSymbol)
+        wayps = self.main.get_all_waypoints().values()
+        for w in wayps:
+            print(w)
+            k = f"-{w.symbol}-"
+            self.system_treedata.insert("",k,w.symbol,[str(w.type)])
 
+            if len(w.traits)>0:
+                self.system_treedata.insert(k, k+"traits-", "Traits", [])
+                for t in w.traits:
+                    self.system_treedata.insert(k+"traits-", k+"traits-"+str(t.symbol), str(t.symbol), [t.description])
+
+            if len(w.orbitals)>0:
+                self.system_treedata.insert(k, k+"orbitals-", "Orbitals", [])
+                for o in w.orbitals:
+                    self.system_treedata.insert(k+"orbitals-", k+"orbitals-"+str(o.symbol), str(o.symbol), [])
+        self.window["-systemtree-"].update(values=self.system_treedata)
+    def update_auto_tree(self):
+        self.auto_treedata = sg.TreeData()
+        
+        for s in self.main.get_ships().values():
+            k = f"-{s.symbol}-"
+            print(k)
+            if k in self.auto_ships:
+                self.auto_treedata.insert("",k,s.symbol,[str(s.frame.name.replace("Frame ","")),"X"])
+            else:
+                self.auto_treedata.insert("",k,s.symbol,[str(s.frame.name.replace("Frame ",""))," "])
+
+        self.window["-autotree-"].update(values=self.auto_treedata)
+    def update_market_tree(self):
+        self.market_treedata = sg.TreeData()
+        # TODO
+        for s in self.main.get_ships().values():
+            k = f"-{s.symbol}-"
+            print(k)
+            if k in self.auto_ships:
+                self.market_treedata.insert("",k,s.symbol,[str(s.frame.name.replace("Frame ","")),"X"])
+            else:
+                self.market_treedata.insert("",k,s.symbol,[str(s.frame.name.replace("Frame ",""))," "])
+
+        self.window["-markettree-"].update(values=self.market_treedata)
     def update_ships_tree(self):
         ships = self.main.get_ships()
         self.treedata = sg.TreeData()
@@ -152,65 +214,8 @@ class SpaceTradersGUI:
                 self.treedata.insert(k+"modules-", k+f"modules-{m.symbol}-", m.name, [
                                      m.capacity if m.capacity else m.range if m.range else None])
         self.window["-tree-"].update(values=self.treedata)
-
-    def get_ship_layout(self):
-        return [[sg.Drop([], k="-shipdrop-", s=(20, 10), enable_events=True)],
-                [sg.Text("ship", k="-shiptxt-")],
-                [sg.Text("fuel", k="-shipfueltxt-")],
-                [sg.Text("shipstatus", k="-shipstatustxt-"), sg.ProgressBar(10000,
-                                                                            k="-shipstatusbar-", size=(100, 10), visible=False)],
-                [sg.Text("Cooldown: "), sg.ProgressBar(
-                    10000, k="-shipcooldownbar-", size=(100, 10), visible=False)],
-                [sg.Button("Dock", k="-btndock-"), sg.Button("Orbit", k="-btnorbit-"), sg.Button("Navigate to:", k="-btnnavigate-"), sg.Drop([], k="-shipnavdrop-", s=(20, 10)),
-                 sg.Button("Excavate", k="-btnexcavate-"), sg.Button("Survey",
-                                                                     k="-btnsurvey-"), sg.Button("Refuel", k="-btnrefuel-"),
-                 sg.Button("Sell", k="-btnsell-"), sg.Button("Jettison", k="-btnjettison-"), sg.Button("Deliver", k="-btndeliver-")],
-                [sg.Table([], ["Symbol", "Units"], k="-shipcargotable-", expand_x=True)],
-                [sg.Table([], ["Symbol", "Size", "Deposits", "sig"], k="-shipsurveytable-",
-                          expand_x=True, col_widths=[120, 100, 570, 170])],
-                [sg.Button("Delete survey", k="-btndelsurvey-")]
-                ]
-
-    def get_system_layout(self):
-        return [[sg.Tree(data=self.treedata, headings=['st', 'nd', 'th'], change_submits=True, auto_size_columns=False, header_border_width=4,
-                    # header_relief=RELIEF_GROOVE,
-                    key='-systemtree-', show_expanded=True, expand_x=True, expand_y=True)]]
-    def get_auto_layout(self):
-        return [[sg.Tree(data=self.treedata, headings=['frame','auto'], change_submits=True, auto_size_columns=False, header_border_width=4,
-                    # header_relief=RELIEF_GROOVE,
-                    key='-autotree-', show_expanded=True, expand_x=True, expand_y=True)]]
-
-    def update_system_tree(self):
-        self.system_treedata = sg.TreeData()
-        system = self.main.get_waypoints("X1-DF55")
-        for w in system:
-            print(w)
-            k = f"-{w.symbol}-"
-            self.system_treedata.insert("",k,w.symbol,[str(w.type)])
-
-            if len(w.traits)>0:
-                self.system_treedata.insert(k, k+"traits-", "Traits", [])
-                for t in w.traits:
-                    self.system_treedata.insert(k+"traits-", k+"traits-"+str(t.symbol), str(t.symbol), [t.description])
-
-            if len(w.orbitals)>0:
-                self.system_treedata.insert(k, k+"orbitals-", "Orbitals", [])
-                for o in w.orbitals:
-                    self.system_treedata.insert(k+"orbitals-", k+"orbitals-"+str(o.symbol), str(o.symbol), [])
-        self.window["-systemtree-"].update(values=self.system_treedata)
-    def update_auto_tree(self):
-        self.auto_treedata = sg.TreeData()
-        
-        for s in self.main.get_ships().values():
-            k = f"-{s.symbol}-"
-            print(k)
-            if k in self.auto_ships:
-                self.auto_treedata.insert("",k,s.symbol,[str(s.frame.name.replace("Frame ","")),"X"])
-            else:
-                self.auto_treedata.insert("",k,s.symbol,[str(s.frame.name.replace("Frame ",""))," "])
-
-        self.window["-autotree-"].update(values=self.auto_treedata)
-
+    #endregion
+    #region update
     def update_ship(self):
         if not self._shipdrop_populated or self._shipdrop_populated_time and (datetime.utcnow()-self._shipdrop_populated_time) > 300:
             ships = self.main.get_ships()
@@ -269,17 +274,30 @@ class SpaceTradersGUI:
             if self.last_surveydata != surveydata:
                 self.window["-shipsurveytable-"].update(values=surveydata)
                 self.last_surveydata = surveydata
+    def update_agent(self):
+        agent = self.main.get_agent()
+        string = f"Name: {agent.symbol}\nAccount ID: {agent.accountId}\nHeadquarter: {agent.headquarters}\nCredits: {agent.credits}"
+        self.window["-agentsymbol-"].update(value=string)
+    def update_contract(self):
+        contracts = self.main.get_contracts()
+        string = ""
+        first = True
+        for co in contracts:
+            c = contracts[co]
+            if not first:
+                string += "\n\n"
+            else:
+                first = False
+            string += f"Id: {c.id}\n  Accepted: {c.accepted}\n  Fulfilled: {c.fulfilled}\n  Faction: {c.factionSymbol}\n  Expiration: {c.expiration}\n  Type: {c.type}\n  Terms:\n    Deadline: {c.terms.deadline}\n    onAccepted: {c.terms.payment.onAccepted}\n    onFulfilled: {c.terms.payment.onFulfilled}\n    Deliver:"
 
-    def get_shipyards_layout(self):
-        return [[sg.Column([
-            [sg.Drop([], k="-shipyarddrop-", size=(20, 1))],
-            [sg.Text("", k="-shipyardtext-")],
-            [sg.Drop([], "Select Shipyard first", k="-shipyardship-", size=(20, 1))],
-            [sg.Button("Buy", k="-buyship-")]
-        ],
-            scrollable=True, vertical_scroll_only=True,
-            expand_x=True, expand_y=True)]]
-
+            firstd = True
+            if not firstd:
+                string += "\n"
+            else:
+                firstd = False
+            for d in c.terms.deliver:
+                string += f"\n      {d.tradeSymbol}:\n        Units: {d.unitsFulfilled}/{d.unitsRequired}\n        To: {d.destinationSymbol}"
+        self.window["-contractsymbol-"].update(value=string)
     def update_shipyards(self):
         if not self._shipyarddrop_populated:
             locs = {}
@@ -304,7 +322,8 @@ class SpaceTradersGUI:
             s = self.window["-shipyardship-"].get()
             if s in self.last_shipyardships:
                 self.window["-shipyardtext-"].update(value=s)
-
+    #endregion
+    
     def draw_fig(self, canvas, fig):
         if canvas not in self.canvases:
             self.canvases[canvas] = FigureCanvasTkAgg(fig, canvas)
@@ -355,7 +374,6 @@ class SpaceTradersGUI:
                     except TypeError as e:
                         pprint(e)
 
-
     def update(self, manual=False):
         if self.main._is_logged_in:
             self.window["-logintext-"].update(
@@ -380,6 +398,8 @@ class SpaceTradersGUI:
                               self.main.get_systems_plot())
             elif e == "-autotab-"  and manual:
                 self.update_auto_tree()
+            elif e == "-markettab-"  and manual:
+                self.update_market_tree()
             
             self.auto()
 

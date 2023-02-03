@@ -145,7 +145,6 @@ class SchemaFor200ResponseBodyApplicationJson(
             
                 class MetaOapg:
                     required = {
-                        "route",
                         "cooldown",
                     }
                     
