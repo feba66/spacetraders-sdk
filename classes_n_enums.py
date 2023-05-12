@@ -853,11 +853,13 @@ class Waypoint:
         self.chart = Chart(data["chart"]) if "chart" in data else None
 @dataclass
 class ShipyardTransaction:
+    waypointSymbol:str
     price:int
     agentSymbol:str
     timestamp:str
     shipSymbol:Optional[str]
     def __init__(self,data) -> None:
+        self.waypointSymbol=data["waypointSymbol"]
         self.price = data["price"].as_int_oapg
         self.agentSymbol = data["agentSymbol"]
         self.timestamp = data["timestamp"]
@@ -906,21 +908,23 @@ class TradeGood:
         self.description=data["description"]
 @dataclass
 class MarketTransaction:
+    waypointSymbol:str
     shipSymbol:str
-    units:int
-    type:MarketTransactionType
-    pricePerUnit:int
-    timestamp:str
     tradeSymbol:str
+    type:MarketTransactionType
+    units:int
+    pricePerUnit:int
     totalPrice:int
+    timestamp:str
     def __init__(self,data) -> None:
+        self.waypointSymbol=data["waypointSymbol"]
         self.shipSymbol=data["shipSymbol"]
-        self.units=data["units"].as_int_oapg
-        self.type=MarketTransactionType[data["type"]]
-        self.pricePerUnit=data["pricePerUnit"].as_int_oapg
-        self.timestamp=data["timestamp"]
         self.tradeSymbol=data["tradeSymbol"]
+        self.type=MarketTransactionType[data["type"]]
+        self.units=data["units"].as_int_oapg
+        self.pricePerUnit=data["pricePerUnit"].as_int_oapg
         self.totalPrice=data["totalPrice"].as_int_oapg
+        self.timestamp=data["timestamp"]
 @dataclass
 class MarketTradeGood:
     tradeVolume:int

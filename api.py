@@ -301,7 +301,7 @@ class SpaceTraders:
     def purchase_ship(self, waypointSymbol,shipType):
         try:
             api_response = self.api_fleet.purchase_ship(body={"waypointSymbol": waypointSymbol,"shipType":shipType})
-            a,s=(Agent(api_response.body["data"]["agent"]),Ship(api_response.body["data"]["ship"]))
+            a,s=(Agent(api_response.body["data"]["agent"]),Ship(api_response.body["data"]["ship"]),ShipyardTransaction(api_response.body["data"]["transaction"]))
             self.agent=a
             self.ships[s.symbol]=s
             return (a,s)
